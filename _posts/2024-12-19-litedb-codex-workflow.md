@@ -32,7 +32,7 @@ Focus on:
 
 Copy and paste the rough task to Codex (web) and let it draft plans in plan mode:
 
-```
+```text
 Here is a feature which I want to implement. Please analyze the codebase 
 and collect information about the current implementation and what changes 
 would be necessary.
@@ -45,7 +45,7 @@ When finished, copy all versions back to the original ChatGPT chat and ask it to
 
 Copy the plan to Codex and ask it to create a tasklist including checkboxes to track progress:
 
-```
+```text
 Please create a .md file with the epic and checkboxes per Task. 
 Then go on and implement the first few tasks:
 [YOUR TASKS HERE]
@@ -67,7 +67,7 @@ gh pr list
 
 You'll see something like:
 
-```
+```text
 Showing 18 of 18 open pull requests in JKamsker/LiteDB
 
 ID   TITLE                                                            BRANCH
@@ -81,7 +81,7 @@ ID   TITLE                                                            BRANCH
 
 Copy and paste the PR list into this template:
 
-```
+```text
 Please check out all PR's in different worktrees in `..\LiteDB.worktrees` 
 (outside the workspace) and evaluate which PR is the best/which one should 
 I accept. Mixing would also be possible: Take the best of all worlds. 
@@ -101,13 +101,13 @@ starting with the assessment
 
 Codex will evaluate each PR based on the overall plan and create Markdown files with the details. Copy these back to ChatGPT and ask it to create a detailed plan:
 
-```
+```text
 Please aggregate findings:
 ```
 
 For larger sets of findings, batch them:
 
-```
+```text
 Here is another set of findings, please check those if they have 
 something to add:
 ```
@@ -129,7 +129,7 @@ ChatGPT will draft a detailed plan showing what to merge and what might be missi
 
 Take the plan from ChatGPT and ask Codex to implement it:
 
-```
+```text
 Please check out all relevant PR's in different worktrees in `..\LiteDB.worktrees` 
 (outside the workspace). Take the best of all worlds. 
 Overall plan is in: `docs\Spatial-Revamp` each branch should have checklists.
