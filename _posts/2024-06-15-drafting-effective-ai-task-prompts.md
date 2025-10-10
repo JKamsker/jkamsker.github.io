@@ -27,7 +27,7 @@ This keeps the assistant centred on value, not code snippets.
 
 Once the feature outcome is clear, copy the entire brief into the Codex plan mode and ask it to examine the repository. Useful prompts include:
 
-```
+```text
 Here is a feature that I want to implement. Please analyze the codebase and collect information about the current implementation and what changes would be necessary.
 ```
 
@@ -47,7 +47,7 @@ Only when the plan satisfies you should you move on to execution.
 
 With the high-level plan in hand, return to Codex and request a task list with checkboxes that you can track as you implement. A simple follow-up prompt works:
 
-```
+```text
 Please create a .md file with the epic and checkboxes per task. Then go on and implement the first few tasks:
 [PASTE TASKS HERE]
 ```

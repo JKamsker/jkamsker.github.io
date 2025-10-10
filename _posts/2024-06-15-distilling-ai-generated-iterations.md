@@ -35,7 +35,7 @@ This creates a paper trail that you can paste back into ChatGPT when it is time 
 
 Once the branches exist, ask ChatGPT to evaluate them. Provide the command output, diffs, and any markdown summaries produced by Codex. Helpful prompts sound like:
 
-```
+```text
 Please check out all PRs in different worktrees and evaluate which PR is the best or what combination would be ideal. Mixing approaches is allowed—take the best of all worlds.
 ```
 
@@ -45,7 +45,7 @@ Encourage the model to grade each branch against the plan, call out missing piec
 
 When multiple evaluation rounds occur, collate the feedback before asking for a final verdict. A reliable pattern is:
 
-```
+```text
 Here is another set of findings. Please check whether they add anything new:
 [PASTE SUMMARIES HERE]
 ```
