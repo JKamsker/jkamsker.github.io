@@ -14,8 +14,6 @@ urls:
       url: /about
     - text: Blog
       url: /blog
-    - text: Contact
-      url : /contact
 
 
 # Edit Author details (For multi authors check _data/authors.yml)
@@ -27,7 +25,7 @@ author_email: ""
 author_location: Linz, Austria
 author_website_url: "http://jonas.kamsker.at/"
 typewrite-text: ".NET developer, open-source enthusiast, and tool builder based in Linz, Austria"
-hero_cover_img: sample_cover.jpg # replace this for changing homepage cover (eg. try cover.jpeg). Image should be in /assets/img
+hero_cover_img: cover.jpeg # Image should be in /assets/img
 
 # Experiences
 author_work_experiences:
@@ -105,8 +103,16 @@ linkedin_username: jonas-kamsker
 # disqus_shortname: sujay-kundu
 # hyvor_talk_website_id: 476
 
+# giscus (comments)
+giscus_repo: JKamsker/jkamsker.github.io
+giscus_repo_id: R_kgDOP_Otiw
+giscus_category: Blog Comments
+giscus_category_id: DIC_kwDOP_Oti84C2tTk
+
 # wakatime username (coding activity)
 # wakatime_username:
+# wakatime_languages_embed_url:
+# wakatime_hours_embed_url:
 
 # mailchimp embedded form url (newsletter):
 # mailchimp_form_url:

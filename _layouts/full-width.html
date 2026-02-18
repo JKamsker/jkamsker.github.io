@@ -10,9 +10,6 @@ layout: compress
         <div class="container-fluid">
             {{ content }}
         </div>
-         <div class="col-lg-12" id="newsletter_footer">
-               {%- include blog_newsletter.html -%}
-         </div>
         {%- include footer.html -%}
      <script>
             var options = {
@@ -24,7 +21,6 @@ layout: compress
             nanobar.go( 76 );
             nanobar.go(100);
         </script>
-   <script src="{{site.url}}{{site.baseurl}}/assets/js/mode-switcher.js"></script>
    <script>
     if (window.netlifyIdentity) {
       window.netlifyIdentity.on("init", user => {
@@ -36,22 +32,5 @@ layout: compress
       });
     }
   </script>
-      <!-- what's new -->
-       <script>
-        var OlvyConfig = {
-          organisation: "{{site.olvy_organization}}",
-          target: "#olvy-target",
-          type: "{{site.olvy_widget_type}}",
-          view: {
-            showSearch: true,
-            compact: true,
-            showHeader: true, /* only applies when widget type is embed. you cannot hide header for modal and sidebar widgets */
-            showUnreadIndicator: true,
-            unreadIndicatorColor: "#FF8528FF",
-            unreadIndicatorPosition: "top-right"
-          }
-        };
-      </script>
-      <script type="text/javascript" src="https://app.olvy.co/script.js" defer="defer"></script>
     </body>
 </html>

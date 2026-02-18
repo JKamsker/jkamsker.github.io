@@ -1,8 +1,8 @@
 ---
 name: Jonas Kamsker
 username: jkamsker
-bio: "Stuff doer since 2011"
-site: http://jonas.kamsker.at/
+bio: "Full-stack .NET developer and open-source contributor based in Linz, Austria."
+site: https://jonas.kamsker.at/
 avatar: jkamsker.png
 email: ""
 social:

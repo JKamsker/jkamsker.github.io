@@ -1,6 +1,6 @@
 {
-  "name": "devlopr jekyll blog",
-  "description": "A Jekyll Theme built for Developers",
-  "repository": "https://github.com/sujaykundu777/devlopr-jekyll",
+  "name": "jkamsker.github.io",
+  "description": "Personal website and blog of Jonas Kamsker",
+  "repository": "https://github.com/JKamsker/jkamsker.github.io",
   "keywords": ["jekyll", "blog"]
 }

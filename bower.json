@@ -1,10 +1,10 @@
 {
-  "name": "devlopr-jekyll",
-  "homepage": "https://github.com/sujaykundu777/devlopr-jekyll",
+  "name": "jkamsker.github.io",
+  "homepage": "https://github.com/JKamsker/jkamsker.github.io",
   "authors": [
-    "sujaykundu777 <sujaykundu777@gmail.com>"
+    "JKamsker"
   ],
-  "description": "A Jekyll Theme Built For Developers",
+  "description": "Personal website and blog of Jonas Kamsker",
   "main": "",
   "keywords": [
     "jekyll-theme",

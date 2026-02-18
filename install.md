@@ -2,6 +2,7 @@
 title: Get Started
 layout: page
 permalink: /get-started/
+published: false
 ---
 
 ## Getting Started - How to use “devlopr-jekyll” theme

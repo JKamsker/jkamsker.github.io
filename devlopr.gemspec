@@ -3,11 +3,11 @@
 Gem::Specification.new do |spec|
   spec.name          = "devlopr"
   spec.version       = "0.5.0"
-  spec.authors       = ["Sujay Kundu"]
-  spec.email         = ["sujaykundu777@gmail.com"]
+  spec.authors       = ["Jonas Kamsker"]
+  spec.email         = [""]
 
-  spec.summary       = %q{ A Jekyll Theme built for developers }
-  spec.homepage      = "https://github.com/sujaykundu777/devlopr-jekyll"
+  spec.summary       = %q{ Personal website and blog of Jonas Kamsker }
+  spec.homepage      = "https://github.com/JKamsker/jkamsker.github.io"
   spec.license       = "MIT"
 
   spec.metadata["plugin_type"] = "theme"
