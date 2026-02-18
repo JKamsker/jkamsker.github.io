@@ -175,7 +175,7 @@ defaults:
       permalink: /blog/authors/:slug
   -
     scope:
-      path: 'assets/**'
+      path: 'assets'
     values:
       sitemap: false
 

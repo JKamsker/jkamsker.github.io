@@ -1,25 +1,37 @@
-version: '3' # specify docker-compose version
-
-# Define the services/containers to be run
 services:
-  jekyllbuild:
+  jekyll:
     build:
       context: .
       args:
-        build_command: "jekyll build --watch"
+        build_command: "bundle exec jekyll serve --host 0.0.0.0 --livereload --watch --force_polling --incremental --destination /tmp/jekyll-site"
+    environment:
+      - JEKYLL_ENV=development
     volumes:
-      - ".:/srv/jekyll"
+      - "./_authors:/srv/jekyll/_authors"
+      - "./_data:/srv/jekyll/_data"
+      - "./_includes:/srv/jekyll/_includes"
+      - "./_layouts:/srv/jekyll/_layouts"
+      - "./_posts:/srv/jekyll/_posts"
+      - "./_products:/srv/jekyll/_products"
+      - "./_sass:/srv/jekyll/_sass"
+      - "./admin:/srv/jekyll/admin"
+      - "./assets/css:/srv/jekyll/assets/css"
+      - "./assets/img:/srv/jekyll/assets/img"
+      - "./assets/js:/srv/jekyll/assets/js"
+      - "./blog:/srv/jekyll/blog"
+      - "./categories:/srv/jekyll/categories"
+      - "./gallery:/srv/jekyll/gallery"
+      - "./404.md:/srv/jekyll/404.md"
+      - "./about.md:/srv/jekyll/about.md"
+      - "./feed.xml:/srv/jekyll/feed.xml"
+      - "./index.html:/srv/jekyll/index.html"
+      - "./install.md:/srv/jekyll/install.md"
+      - "./sponsors.md:/srv/jekyll/sponsors.md"
+      - "./_config.yml:/srv/jekyll/_config.yml"
+      - "jekyll-cache:/srv/jekyll/.jekyll-cache"
     ports:
       - 4000:4000
       - 35729:35729
-  nginx:
-    image: nginx
-    volumes:
-      - "./build:/var/www/public"
-      - "./nginx/nginx.conf:/etc/nginx/nginx.conf"
-      - "./nginx/html/404.html:/usr/share/nginx/html/404.html"
-      # to use jekyll's 404 page, uncomment the line below and disable the line above
-      # Important: ensure that 404.html exist else this will throw an error during build
-    # - "./web/_site/404.html:/usr/share/nginx/html/404.html"
-    ports:
-      - 80:80
+
+volumes:
+  jekyll-cache:
