@@ -71,22 +71,22 @@ author_education_details:
 
 # Projects
 author_project_details:
-              - project_thumbnail: posts/code.jpg
+              - project_thumbnail: project-audible-tools.webp
                 project_title: Audible Tools
                 project_description: Privacy-focused browser-based AAX to M4B/MP3/FLAC converter with 500+ GitHub stars. Processes audiobooks locally without uploading data.
                 project_url: https://audible-tools.kamsker.at/
                 visibility: true
-              - project_thumbnail: posts/code.jpg
+              - project_thumbnail: project-spectre-autocompletion.png
                 project_title: JKToolKit.Spectre.AutoCompletion
                 project_description: Supercharge your Spectre.Console apps with AutoCompletion support
                 project_url: https://github.com/JKamsker/JKToolKit.Spectre.AutoCompletion
                 visibility: true
-              - project_thumbnail: posts/code.jpg
+              - project_thumbnail: project-litedb-migration.png
                 project_title: LiteDB.Migration
                 project_description: Migration framework for LiteDB databases
                 project_url: https://github.com/JKamsker/LiteDB.Migration
                 visibility: true
-              - project_thumbnail: posts/code.jpg
+              - project_thumbnail: project-fourser-gen.png
                 project_title: FourSer.Gen
                 project_description: High-performance binary serializer source generator for .NET
                 project_url: https://github.com/JKamsker/FourSer.Gen
