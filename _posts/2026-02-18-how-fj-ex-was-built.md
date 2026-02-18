@@ -51,19 +51,22 @@ The dream was simple — give my agents (and myself, when I'm feeling brave) the
 
 ```bash
 # What's happening?
-fj-ex actions runs
+fj-ex actions runs --limit 20
 
-# Let me read the tea leaves
-fj-ex actions logs job 42
+# Let me read the tea leaves (whole run)
+fj-ex actions logs run --run-index 42
+
+# ...or a specific job inside that run
+fj-ex actions logs job --run-index 42 --job-index 0
 
 # Grab the goods
-fj-ex actions artifacts download 15
+fj-ex actions artifacts get --run-index 42 --artifact build-output --out-file build-output.zip
 
 # Nope, kill it
-fj-ex actions cancel 15
+fj-ex actions cancel --run-index 42
 
 # Hope springs eternal
-fj-ex actions rerun 15
+fj-ex actions rerun --run-index 42
 ```
 
 Terminal. One line. Done. Something an agent can call, parse the output of, and reason about.
@@ -78,16 +81,16 @@ It started as a few PowerShell scripts. Just enough to stop the bleeding while w
 
 Forgejo's frontend developers — bless their hearts — left the keys in the ignition.
 
-Their web UI embeds structured JSON directly in `data-*` HTML attributes. Run data sits right there in the page markup:
+Their web UI embeds structured JSON directly in `data-*` HTML attributes. On a run page, the initial UI state (and sometimes artifact metadata) is right there in the markup (HTML-escaped, but still JSON once you decode entities):
 
 ```html
-<div id="response-data"
-     data-initial-post-response='{"workflow_runs":[{"id":42,"status":"completed","conclusion":"failure",...}]}'
-     data-initial-artifacts-response='[{"id":15,"name":"build-output","size":204800,...}]'>
+<div
+  data-initial-post-response="{&quot;state&quot;:{&quot;run&quot;:{&quot;jobs&quot;:[{&quot;id&quot;:123,&quot;name&quot;:&quot;build&quot;,&quot;status&quot;:&quot;failure&quot;}]}}}"
+  data-initial-artifacts-response="[{&quot;id&quot;:15,&quot;name&quot;:&quot;build-output&quot;,&quot;size&quot;:204800}]">
 </div>
 ```
 
-No headless browser needed. No DOM spelunking. Just: fetch the page, yank the attribute, parse the JSON, pretend this was an API all along.
+No headless browser needed. No DOM spelunking. Just: fetch the page, yank the attribute(s), decode HTML entities, parse the JSON, pretend this was an API all along.
 
 That's not an API… but it *is* data.
 
@@ -99,7 +102,7 @@ The PowerShell scripts worked until I wanted one more feature and realized I was
 
 Here's why this matters beyond the technical trick: an AI agent with `fj-ex` installed can now do the full loop.
 
-Build fails → agent runs `fj-ex actions runs` to see what happened → reads the logs with `fj-ex actions logs job <id>` → figures out the issue → pushes a fix → monitors the rerun. All autonomously. All in the terminal. No human required to go click around in a web UI on the agent's behalf.
+Build fails → agent runs `fj-ex actions runs` to see what happened → reads the logs with `fj-ex actions logs run --run-index <n>` (or `... logs job --run-index <n> --job-index <n>`) → figures out the issue → pushes a fix → monitors the rerun. All autonomously. All in the terminal. No human required to go click around in a web UI on the agent's behalf.
 
 Forgejo handed my agents a beautiful map of the world. I just gave them back their shoes.
 
