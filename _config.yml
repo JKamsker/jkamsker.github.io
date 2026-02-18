@@ -26,7 +26,7 @@ urls:
 
 author_logo: profile.png
 author: Jonas Kamsker
-author_bio: "Hi, I'm Jonas - a .NET developer and open-source enthusiast based in Linz, Austria. I've been building software since 2011, focusing on C# libraries, developer tools, and Spectre.Console extensions. I'm the creator of Audible Tools, a privacy-focused browser-based AAX converter with over 500 stars on GitHub that processes audiobook files entirely in your browser without uploading data to any server."
+author_bio: "Full-stack developer with a strong focus on backend, experienced in C#/.NET and various frontend technologies. Passionate about software architecture, clean code, open source, and generative AI. Creator of Audible Tools, a privacy-focused browser-based AAX converter with 500+ GitHub stars. Active open-source contributor to projects like spectre.console, graphql-dotnet, NSwag, and FFMpegCore. Volunteer mentor at CoderDojo Linz, teaching kids programming, Docker, and Discord bot development."
 author_email: ""
 author_location: Linz, Austria
 author_website_url: "http://jonas.kamsker.at/"
@@ -35,21 +35,39 @@ hero_cover_img: sample_cover.jpg # replace this for changing homepage cover (eg.
 
 # Experiences
 author_work_experiences:
-            - company_name: ""
+            - company_name: dccx GmbH
               company_logo: ""
               company_url: ""
-              designation: ""
-              description: ""
-              visibility: false
+              designation: Senior Software Developer
+              description: "Oct 2025 - Present (Part-time)"
+              visibility: true
+            - company_name: Suxxesso GmbH
+              company_logo: ""
+              company_url: ""
+              designation: Software Developer
+              description: "May 2024 - Present, Vienna/Remote. Architecture and implementation of a central Command & Control server for managing and executing test cases. Development of test execution agents and maintainable architectures."
+              visibility: true
+            - company_name: APRO Kassensysteme GmbH
+              company_logo: ""
+              company_url: https://apro.at/
+              designation: Software Developer
+              description: "2019 - April 2024, Linz. Comprehensive cash register solutions for gastronomy. Web API development with ASP.NET Core. Frontend development with ReactJS."
+              visibility: true
+            - company_name: BEKO Engineering & Informatik
+              company_logo: ""
+              company_url: https://beko.at/
+              designation: Junior Software Developer C#.NET
+              description: "Mar 2018 - Dec 2018, Graz. First professional experience with customer projects and internal administration software."
+              visibility: true
 
 # Education
 author_education_details:
               - college_logo: ""
-                college_name: ""
+                college_name: BORG Kindberg
                 college_url: ""
                 college_degree: ""
-                description: ""
-                visibility: false
+                description: 2012 - 2018
+                visibility: true
 
 # Projects
 author_project_details:
@@ -79,7 +97,7 @@ author_project_details:
 github_username: JKamsker
 # instagram_username:
 # facebook_username:
-# linkedin_username:
+linkedin_username: jonas-kamsker
 # behance_username:
 # medium_username:
 # telegram_username:
@@ -111,8 +129,8 @@ highlighter: rouge
 permalink: pretty
 
 # Choose what to show ( can be true or false)
-show_author_work_experiences: false
-show_author_education_details: false
+show_author_work_experiences: true
+show_author_education_details: true
 show_author_project_details: true
 
 # pagination of posts
