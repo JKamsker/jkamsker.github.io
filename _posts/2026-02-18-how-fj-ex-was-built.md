@@ -1,86 +1,52 @@
 ---
 layout: post
 title: "Forgejo's CLI Doesn't Offer a Way to See Build Details? Fine, I Do It Myself Then"
-summary: The Forgejo API doesn't expose Actions properly. So I scraped the web UI and built a CLI that does.
+summary: My AI agents need hands and feet to do CI/CD for me. GitHub's CLI gives them that. Forgejo's doesn't. So I built what was missing.
 author: jkamsker
 date: '2026-02-18 12:00:00 +0000'
 category: devlog
 thumbnail: /assets/img/posts/code.jpg
-keywords: rust, forgejo, cli, forgejo-actions, ci-cd, web-scraping, developer-tools
+keywords: rust, forgejo, cli, forgejo-actions, ci-cd, web-scraping, developer-tools, ai-agents
 tags: [rust, cli, devops]
 permalink: /blog/how-fj-ex-was-built/
 ---
 
-## The Frustration
+## A Confession and a Problem
 
-[Forgejo CLI (`fj`)](https://codeberg.org/forgejo-contrib/forgejo-cli/) is great. It's the `gh` equivalent for Forgejo — repos, issues, PRs, releases, all from the terminal. Solid tool.
+I'll be honest: I'm not great at CI/CD. I don't enjoy writing pipeline configs, I don't enjoy debugging them, and I *especially* don't enjoy staring at log output trying to figure out why a build that worked yesterday decided to have feelings today.
 
-But try working with **Forgejo Actions** and you'll hit a wall real fast. Want to download logs from a failed build? Open the browser. Grab artifacts? Browser. Cancel a stuck run? Browser. Rerun a job? You guessed it — *browser*.
+So I do what any (un)reasonable developer in 2026 does — I let AI agents handle it. They write the workflows, they iterate on failures, they fix the weird YAML indentation issues. I review the results. It's a great arrangement.
 
-The API simply doesn't expose these features. They only exist behind the web UI. So every time a build breaks, you're alt-tabbing, navigating, clicking, waiting, downloading. Across multiple repos. Multiple times a day.
+This works beautifully on GitHub, because `gh` — GitHub's CLI — covers *everything*. Runs, logs, artifacts, cancellations, reruns. An AI agent with access to `gh` can see what's happening, read the logs, download artifacts, retry failures, all without ever touching a browser. It has hands and feet. It can walk around and get things done.
 
-I got tired of it.
+Then my company started migrating to self-hosted platforms. Forgejo, specifically — open source, lightweight, GitHub-compatible Actions. Great choice for a lot of reasons.
 
-## Phase 1: "Let Me Just Write a Quick Script"
+One problem: the moment we moved, my AI agents lost their legs.
 
-Famous last words. It started as a few PowerShell scripts in an internal work repo. Nothing fancy — just enough automation to stop me from clicking through the UI ten times a day.
+## The Gap
 
-But while hacking those scripts together, I found something that made the whole thing viable: Forgejo's web UI embeds structured JSON directly in `data-*` HTML attributes. The run list page stuffs all the job data into `data-initial-post-response`. Artifacts? `data-initial-artifacts-response`. It's just... *sitting there*. No JavaScript rendering needed, no DOM parsing — fetch the page, regex out the attribute, parse the JSON. Done.
+[Forgejo CLI (`fj`)](https://codeberg.org/forgejo-contrib/forgejo-cli/) is solid. Repos, issues, PRs, releases — all there, all from the terminal. It's the `gh` equivalent, and for the things it covers, it covers them well.
 
-The scripts worked. For a while. Then I wanted to add one more feature, and suddenly I was fighting PowerShell's quirks more than solving the actual problem.
+But **Forgejo Actions**? Complete blind spot. The API simply doesn't expose them. No run listing, no log downloads, no artifacts, no cancel, no rerun. These features exist exclusively behind the web UI.
 
-You know what that means.
+For a human, that's annoying. You alt-tab, you click around, you cope.
 
-## Phase 2: "Alright, Let's Do This Properly"
+For an AI agent? It's a brick wall. Agents don't have browsers. They have terminals and CLI tools. If there's no command for it, it doesn't exist. My agents went from autonomously managing the full CI/CD lifecycle on GitHub to being completely helpless the moment a build failed on Forgejo.
 
-Time for Rust. But I had one rule: **don't compete with `fj`, extend it**. Hence the name — `fj-ex`, Forgejo CLI *Extension*. Not a fork, not a replacement, a companion.
+I was back to manually debugging pipelines. The one thing I was specifically trying to *not do*.
 
-That meant copying `fj`'s homework on purpose. Same `--host/-H`, `--repo/-r`, `--remote/-R` flags. Same git-remote inference. Same subcommand style. If you already use `fj`, your muscle memory carries over. No learning curve, no "wait, which flag was it again?"
+## What I Needed
 
-## The Trick That Makes It All Work
-
-Here's the fun part. Since Forgejo's API won't cooperate, `fj-ex` just... pretends to be a browser. It makes the exact same HTTP requests your browser would:
-
-```
-GET  /{repo}/actions?list_inner=true   → runs list
-GET  /{repo}/actions/runs/{N}          → run details (JSON hiding in HTML)
-GET  /{repo}/actions/runs/{N}/jobs/…   → raw log download
-GET  /{repo}/actions/runs/{N}/artifacts → artifact list (actual JSON!)
-POST /{repo}/actions/runs/{N}/cancel   → cancel run
-POST /{repo}/actions/runs/{N}/rerun    → rerun
-```
-
-Most responses either return JSON directly or embed it in those `data-*` attributes I mentioned. A regex, a bit of HTML entity decoding, and you've got clean structured data. No headless browser. No DOM parser. Just good old HTTP requests and pattern matching.
-
-For cancel and rerun, it needs to extract the CSRF token from the page first — same as a browser submitting a form. A small hoop to jump through, but nothing dramatic.
-
-## "Wait, How Does It Log In?"
-
-Ah, yes. The spicy part.
-
-There's no API token for these endpoints. So `fj-ex` logs in the old-fashioned way — like a human filling out the login form:
-
-1. Fetch the login page, grab the CSRF token
-2. POST username + password + CSRF
-3. Stash the cookies
-4. If a later request gets redirected to `/user/login`? Auto-relogin, no interruption
-
-Does this mean storing credentials in plaintext? Yes. Is that ideal? No. Is there an alternative when you're authenticating against a login form that doesn't support tokens? Also no.
-
-The README doesn't hide this. You know what you're signing up for.
-
-## The Payoff
-
-All that effort boils down to this — instead of browser tabs, you get:
+The dream was simple — give my agents (and myself, when I'm feeling brave) the same experience `gh` provides:
 
 ```bash
-# What's going on?
+# What's happening?
 fj-ex actions runs
 
-# Show me the logs
+# Why did it break?
 fj-ex actions logs job 42
 
-# Give me the artifacts
+# Grab the build output
 fj-ex actions artifacts download 15
 
 # This run is stuck, kill it
@@ -90,16 +56,38 @@ fj-ex actions cancel 15
 fj-ex actions rerun 15
 ```
 
-Terminal. One line. Done. Same repo-targeting flags as `fj`, so switching between repos is just a `-r` flag away.
+Terminal. One line. Done. Something an agent can call, parse the output of, and reason about.
+
+And it had to feel like `fj`. Same `--host/-H`, `--repo/-r`, `--remote/-R` flags. Same git-remote inference. Same subcommand style. Not a fork, not a replacement — a companion. Hence the name: `fj-ex`, Forgejo CLI *Extension*.
+
+## How I Got There (The Short Version)
+
+It started as a few PowerShell scripts. Just enough to stop the bleeding while we migrated repos. While hacking those together, I found the detail that made this whole project viable: Forgejo's web UI embeds structured JSON directly in `data-*` HTML attributes. Run data sits in `data-initial-post-response`. Artifacts in `data-initial-artifacts-response`. It's just *right there* — no headless browser needed, no DOM parsing. Fetch the page, pull the attribute, parse the JSON.
+
+The scripts worked until I wanted one more feature and realized I was fighting PowerShell harder than the actual problem. So I rewrote it in Rust. Because of course I did.
+
+`fj-ex` essentially pretends to be a browser. Same HTTP requests, same cookie-based auth, same CSRF token dance for mutations like cancel and rerun. Since there's no API token for any of this, it logs in the human way — username, password, stash the session cookies. Is storing credentials ideal? No. Is there an alternative when you're authenticating against a login form that doesn't support tokens? Also no. The README doesn't hide this.
+
+## What It Actually Feels Like
+
+Here's why this matters beyond the technical trick: an AI agent with `fj-ex` installed can now do the full loop.
+
+Build fails → agent runs `fj-ex actions runs` to see what happened → reads the logs with `fj-ex actions logs job <id>` → figures out the issue → pushes a fix → monitors the rerun. All autonomously. All in the terminal. No human required to go click around in a web UI on the agent's behalf.
+
+And for the times I *do* look at CI/CD myself, it's just... nicer. Logs are text in my terminal. I can pipe them into `grep`, `rg`, `less`, whatever. Artifacts download to my current directory. Switching repos is a `-r` flag away. The whole thing gets out of the way and lets me get back to the part of my job I actually enjoy.
 
 ## Is This Cursed? A Little.
 
-Let's be honest — building a CLI on top of web scraping is not the noble path. If Forgejo changes their HTML structure tomorrow, things break. That's the deal.
+Building a CLI on top of web scraping is not the noble path. If Forgejo changes their HTML structure tomorrow, things break. That's the deal.
 
-But the alternative was either contributing the missing API endpoints upstream (a much larger undertaking) or continuing to click through the UI like it's 2005. I chose the pragmatic option.
+But the alternative was either contributing the missing API endpoints upstream — a much larger undertaking, and one I'd still welcome — or telling my agents "sorry, you're on your own" every time a Forgejo build fails. I chose the pragmatic option.
 
-And if Forgejo does add proper API support for Actions someday? Great — migrating `fj-ex` away from scraping will be straightforward. The commands stay the same, only the plumbing changes.
+And if Forgejo *does* add proper API support for Actions someday? Great. The commands stay the same, only the plumbing changes. Migrating away from scraping would be the happiest refactor I've ever done.
 
-Until then, it works, and it's [on crates.io](https://crates.io/crates/forgejo-cli-ex) with pre-built binaries for Linux, Windows, and macOS.
+## Go Get It
 
-No more alt-tabbing.
+`fj-ex` is [on crates.io](https://crates.io/crates/forgejo-cli-ex), [on GitHub](https://github.com/JKamsker/forgejo-cli-ex), and (of course) [CodeBerg](https://codeberg.org/JKamsker/forgejo-cli-ex) with pre-built binaries for Linux, Windows, and macOS.
+
+My agents have their legs back. My Forgejo tabs are closed. And I'm back to doing what I do best — reviewing the work someone else did.
+
+No more alt-tabbing. Not for me, and not for my agents.
