@@ -2,7 +2,7 @@
 layout: post
 title: "Distilling Multiple AI Iterations into a Single Winning Pull Request"
 summary: How to evaluate, compare, and merge Codex-generated branches without losing the bigger picture.
-author: JKamsker
+author: jkamsker
 date: '2024-06-15 11:00:00 +0000'
 category: guides
 thumbnail: /assets/img/posts/code.jpg
