@@ -56,6 +56,6 @@ Saving this checklist in the repository keeps the scope visible and lets you rev
 
 ## Embrace parallel exploration
 
-Finally, keep multiple tasks moving in parallel. Four active threads strike a balance between exploration and depth: enough variety to collect strong ideas, but not so many that you lose track of progress. As you iterate, capture learnings in the original ChatGPT conversation so your future self—and any collaborators—can reason about the trade-offs that shaped the work.
+Finally, keep multiple tasks moving in parallel. Four active threads strike a balance between exploration and depth: enough variety to collect strong ideas, but not so many that you lose track of progress. As you iterate, capture learnings in the original ChatGPT conversation so your future self-and any collaborators-can reason about the trade-offs that shaped the work.
 
 By ritualising the way you brief AI collaborators, you ensure that each session starts with clarity, produces tangible artefacts, and ends with a confident plan of attack.

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "The Problem: ZeroTier Stops Working"
-summary: A quick workaround for ZeroTier going offline on a Raspberry Pi — a cron job that auto-restarts the service.
+summary: A quick workaround for ZeroTier going offline on a Raspberry Pi - a cron job that auto-restarts the service.
 author: jkamsker
 date: '2023-04-11 12:00:00 +0000'
 category: guides

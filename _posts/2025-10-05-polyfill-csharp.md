@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Polyfill C#: Two Ways to Ship One Library Across Two Frameworks"
-summary: Two strategies for supporting multiple .NET target frameworks — compiled conditionals and partial classes with file exclusion.
+summary: Two strategies for supporting multiple .NET target frameworks - compiled conditionals and partial classes with file exclusion.
 author: jkamsker
 date: '2025-10-05 12:00:00 +0000'
 category: guides
@@ -15,7 +15,7 @@ permalink: /blog/polyfill-csharp/
 
 ## The Situation
 
-You have a library. It targets two frameworks — say, `netstandard2.0` (because the world is full of legacy projects that aren't going anywhere) and `net8.0` (because you'd like to use APIs invented after 2017). Both targets need to expose the same public interface, but the *implementation* has to differ because the available APIs are completely different.
+You have a library. It targets two frameworks - say, `netstandard2.0` (because the world is full of legacy projects that aren't going anywhere) and `net8.0` (because you'd like to use APIs invented after 2017). Both targets need to expose the same public interface, but the *implementation* has to differ because the available APIs are completely different.
 
 This is a solved problem. It's solved in two ways. One of them is good.
 
@@ -25,9 +25,9 @@ The classic. The familiar. The thing you reach for first and regret third.
 
 ```csharp
 #if NET8_0
-    // net8 specific code — spans, modern goodness, joy
+    // net8 specific code - spans, modern goodness, joy
 #else
-    // netstandard specific code — string allocations, suffering
+    // netstandard specific code - string allocations, suffering
 #endif
 ```
 
@@ -57,7 +57,7 @@ The `.csproj`:
 </ItemGroup>
 ```
 
-The shared interface — `MyClass.cs`:
+The shared interface - `MyClass.cs`:
 
 ```csharp
 public partial class MyClass
@@ -66,7 +66,7 @@ public partial class MyClass
 }
 ```
 
-The .NET 8 implementation — `MyClass.NetCore.cs`:
+The .NET 8 implementation - `MyClass.NetCore.cs`:
 
 ```csharp
 public partial class MyClass
@@ -78,7 +78,7 @@ public partial class MyClass
 }
 ```
 
-The .NET Standard fallback — `MyClass.NetStd.cs`:
+The .NET Standard fallback - `MyClass.NetStd.cs`:
 
 ```csharp
 public partial class MyClass
@@ -94,9 +94,9 @@ When building for `net8.0`, MSBuild excludes the `*.NetStd.cs` files entirely. W
 
 ## Which One Should You Use?
 
-Honestly? Start with `#if`. If the conditional block is small and isolated, it's the right call — introducing three files for a two-line difference is overkill.
+Honestly? Start with `#if`. If the conditional block is small and isolated, it's the right call - introducing three files for a two-line difference is overkill.
 
-The moment you catch yourself scrolling past a wall of preprocessor directives trying to find where the `netstandard` path ends and the `net8` path begins, switch to Strategy 2. Your code reviewers will thank you. Your IDE will thank you. The next person to touch this file — who is statistically likely to be you, three months from now, with no memory of why any of this exists — will thank you.
+The moment you catch yourself scrolling past a wall of preprocessor directives trying to find where the `netstandard` path ends and the `net8` path begins, switch to Strategy 2. Your code reviewers will thank you. Your IDE will thank you. The next person to touch this file - who is statistically likely to be you, three months from now, with no memory of why any of this exists - will thank you.
 
 ```
 Approach Comparison:

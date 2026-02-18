@@ -21,7 +21,7 @@ What it does *not* handle gracefully is syncing shared Google Calendars. And by 
 
 ## Attempt 1: The Official Guide
 
-I started where any reasonable person would — Mozilla's official support docs. The process seemed straightforward: go to `≡ > New Account > Calendar > On the Network > Next`, enter your Google email, and let Thunderbird's auto-discovery find your calendars.
+I started where any reasonable person would - Mozilla's official support docs. The process seemed straightforward: go to `≡ > New Account > Calendar > On the Network > Next`, enter your Google email, and let Thunderbird's auto-discovery find your calendars.
 
 I entered my email. Thunderbird thought about it for a moment. Then it found... nothing. No Google sign-in prompt. No calendar list. Just a blank screen and the quiet sound of my afternoon evaporating.
 
@@ -33,7 +33,7 @@ Google Calendar lets you grab a "Secret address in iCal format" for each calenda
 
 `https://calendar.google.com/calendar/ical/your.email%40gmail.com/private-a1b2c3d4e5f6/basic.ics`
 
-I pasted this into Thunderbird and — it worked! For my *own* calendars. Perfect sync, no issues.
+I pasted this into Thunderbird and - it worked! For my *own* calendars. Perfect sync, no issues.
 
 For the *shared* calendar I actually needed? Thunderbird rejected the iCal link like a bouncer checking IDs. Same format, same source, different result. Helpful.
 
@@ -52,7 +52,7 @@ That's... not documented anywhere obvious. Google doesn't hand you this URL for 
 Once I knew the URL pattern, the rest was assembly:
 
 1. Open Google Calendar settings for the shared calendar.
-2. Copy the **public address in iCal format** — it contains a long calendar ID like `a1b2c3d4e5@group.calendar.google.com`.
+2. Copy the **public address in iCal format** - it contains a long calendar ID like `a1b2c3d4e5@group.calendar.google.com`.
 3. Extract that calendar ID.
 4. Slot it into the CalDAV URL template: `https://apidata.googleusercontent.com/caldav/v2/[CALENDAR-ID]/events/`
 5. Paste the constructed URL into Thunderbird's calendar location field.
@@ -69,8 +69,8 @@ Frustration-to-Fix Ratio: [██████████] 10/1
 
 ## Why This Is Annoying
 
-The information to make this work exists in the system. Thunderbird *knows* the CalDAV pattern — it uses it internally. Google *exposes* the calendar ID — it's right there in the iCal URL. Neither party connects the dots for the user. It's like two people each holding half a map and refusing to stand next to each other.
+The information to make this work exists in the system. Thunderbird *knows* the CalDAV pattern - it uses it internally. Google *exposes* the calendar ID - it's right there in the iCal URL. Neither party connects the dots for the user. It's like two people each holding half a map and refusing to stand next to each other.
 
-If you're hitting this same wall — shared Google Calendar, Thunderbird, auto-discovery failing, iCal links rejected — this is the fix. Build the CalDAV URL yourself, paste it in, and move on with your life.
+If you're hitting this same wall - shared Google Calendar, Thunderbird, auto-discovery failing, iCal links rejected - this is the fix. Build the CalDAV URL yourself, paste it in, and move on with your life.
 
 You're welcome. I'm going to go close 14 browser tabs.
