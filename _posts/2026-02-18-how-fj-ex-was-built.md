@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "How fj-ex Was Built"
-summary: Building a Rust CLI extension for Forgejo Actions by scraping the web UI when the API falls short.
+title: "Forgejo's CLI Doesn't Offer a Way to See Build Details? Fine, I Do It Myself Then"
+summary: The Forgejo API doesn't expose Actions properly. So I scraped the web UI and built a CLI that does.
 author: jkamsker
 date: '2026-02-18 12:00:00 +0000'
 category: devlog
@@ -11,112 +11,83 @@ tags: [rust, cli, devops]
 permalink: /blog/how-fj-ex-was-built/
 ---
 
-## The Problem
+## The Gap Nobody Filled
 
-The [Forgejo CLI (`fj`)](https://codeberg.org/forgejo-contrib/forgejo-cli/) is a Rust-based CLI client for Forgejo — think `gh` for GitHub, but for Forgejo instances. It covers repos, issues, PRs, releases, wikis, tags, orgs, and more, all through Forgejo's REST API.
+[Forgejo CLI (`fj`)](https://codeberg.org/forgejo-contrib/forgejo-cli/) is the `gh` equivalent for Forgejo — repos, issues, PRs, releases, all via the REST API. It's solid. But if you work with **Forgejo Actions** daily, you hit a wall fast.
 
-But there's a gap: **Forgejo Actions**. While `fj` can list tasks, manage variables/secrets, and dispatch workflows, it can't do what you actually need day-to-day: download full job logs, grab artifacts, cancel runs, or rerun failed jobs. These features simply aren't exposed (or aren't fully exposed) through the Forgejo API — they only exist in the web UI.
+Want to download a job's logs? Grab build artifacts? Cancel a stuck run? Rerun a failed workflow? None of that is exposed through the API. The only way to do it is to click through the web UI.
 
-## Phase 1: PowerShell Scripts
+That gets old quickly when you're debugging CI failures across multiple repos.
 
-This didn't start as a prototype. It started as a set of PowerShell scripts living in an internal work repository, built to automate day-to-day workflow — downloading logs, grabbing artifacts, cancelling and rerunning jobs. Practical tools to fill gaps that `fj` didn't cover.
+## It Started With PowerShell Hacks
 
-Along the way, the scripts discovered that Forgejo's web UI embeds structured data in `data-*` HTML attributes (like `data-initial-post-response` for job lists, `data-initial-artifacts-response` for artifacts). You don't need a full browser or DOM parser — regex extraction on these well-structured attributes is enough.
+This wasn't planned as a project. It started as a handful of PowerShell scripts in an internal work repo — quick-and-dirty automation to stop me from clicking through the Forgejo UI ten times a day.
 
-The credential store format (`ui-creds.json` in `%APPDATA%\Cyborus\forgejo-cli\data\`) was established here and carried forward.
+While writing those scripts, I stumbled onto something useful: Forgejo's web UI embeds structured JSON directly in `data-*` HTML attributes. The run list page has `data-initial-post-response` with all the job data. The artifacts page has `data-initial-artifacts-response`. No JavaScript rendering, no DOM parsing — just fetch the HTML and pull the JSON out of an attribute.
 
-## Phase 2: Moving to Rust — PowerShell Was Holding It Back
+The scripts worked well enough. But over time, extending them meant fighting PowerShell more than solving the actual problem. Time for a rewrite.
 
-Over time, PowerShell became the bottleneck. The scripts worked, but extending them further meant fighting the language more than solving the actual problem. The decision to rewrite in Rust wasn't about making a "proper" version of a prototype — it was about removing the friction that PowerShell introduced so the tooling could keep growing.
+## The Rewrite: Augment, Don't Replace
 
-The PowerShell scripts were removed in commit `56e3f51` once the Rust CLI replaced them.
+The Rust rewrite had one guiding principle: **be a companion to `fj`, not a competitor**. The name says it — `fj-ex`, Forgejo CLI *Extension*.
 
-The rewrite was deliberate about one thing: **augment, don't replace**. The name `fj-ex` (Forgejo CLI Extension) signals that it's a companion to `fj`, not a fork. The CLI surface was designed to feel familiar to `fj` users:
+That meant matching `fj`'s conventions exactly. Same `--host/-H`, `--repo/-r`, `--remote/-R` flags. Same git-remote inference logic. Same subcommand patterns. If you know `fj`, you already know `fj-ex`. The muscle memory transfers.
 
-- Same `--host/-H`, `--repo/-r`, `--remote/-R` target flags
-- Same git-remote inference logic (read the current repo's remotes, fall back to `FJ_FALLBACK_HOST`)
-- Same `auth` subcommand grouping pattern
-- Subcommand hierarchy: `fj-ex actions runs`, `fj-ex actions logs job`, etc.
+## The Core Trick: The Web UI *Is* the API
 
-### Development Progression (from git history)
-
-The build-up was methodical, one layer at a time:
-
-| Commit | What was built |
-|--------|---------------|
-| `6fa88f4` | Repo scaffolding |
-| `de0784e` | CLI skeleton with clap derive |
-| `823b8f7` | Target resolution (git remote inference, `RepoArg` parsing, SSH URL support) |
-| `498a1a5` | Credential store (`ui-creds.json` — same format as the PowerShell PoC) |
-| `ba42fec` | HTML helpers (CSRF extraction, `data-*` attribute parsing) |
-| `6362f4b` | `UiSession` — the HTTP client with cookie jar, auto-relogin on redirect |
-| `d162d20` | List workflows/runs via UI endpoints |
-| `7496c1b` | Log downloading (per-job and per-run) |
-| `fe59aaf` | Artifact listing and downloading |
-| `b70f39c` | Cancel and rerun (with `--dry-run` safety) |
-| `34d72bf` | Smoke test command |
-| `1544b76` | Login command |
-| `4be29a8`–`f4a749c` | Full `auth` subcommand group (status, list, show, logout, clear-cookies) |
-| `b12f37c` | GitHub Actions CI/CD + release pipeline |
-| `4c46b4e` | Renamed crate to `forgejo-cli-ex` for crates.io |
-
-### The "UI API" Approach
-
-The core trick: Forgejo's web UI is the API. `fj-ex` makes the same HTTP requests a browser would:
+Since Forgejo's REST API doesn't cover Actions properly, `fj-ex` talks to the web UI directly — making the same HTTP requests your browser would:
 
 ```
-GET  /{repo}/actions?page=P&limit=L&list_inner=true    → workflows/runs
-GET  /{repo}/actions/runs/{N}                           → run view (HTML with embedded JSON)
+GET  /{repo}/actions?page=P&limit=L&list_inner=true    → runs list
+GET  /{repo}/actions/runs/{N}                           → run details (JSON in HTML)
 GET  /{repo}/actions/runs/{N}/jobs/{J}/attempt/{A}/logs → raw log download
 GET  /{repo}/actions/runs/{N}/artifacts                 → artifact list (JSON)
-POST /{repo}/actions/runs/{N}/cancel                    → cancel (with CSRF)
-POST /{repo}/actions/runs/{N}/rerun                     → rerun (with CSRF)
+POST /{repo}/actions/runs/{N}/cancel                    → cancel run
+POST /{repo}/actions/runs/{N}/rerun                     → rerun
 ```
 
-The HTML responses embed JSON in `data-*` attributes, so parsing is lightweight — regex + `html-escape` for entity decoding, no DOM parser needed.
+The responses either return JSON directly or embed it in `data-*` attributes. A bit of regex extraction and HTML entity decoding is all it takes — no headless browser, no DOM parser.
 
-### Session Management
+For mutating operations (cancel, rerun), `fj-ex` extracts the CSRF token from the page first, just like a browser submitting a form.
 
-`UiSession` handles the login dance:
-1. GET the login page, extract the CSRF token from the form
-2. POST username + password + CSRF token
-3. Persist the resulting cookies to `ui-creds.json`
-4. On subsequent requests, detect redirect to `/user/login` → auto-relogin using stored plaintext creds
+## The Login Dance
 
-Plaintext credential storage is a deliberate tradeoff: it's required for the auto-relogin flow. The README is upfront about this.
+Authentication is where it gets interesting. Since there's no API token mechanism for these endpoints, `fj-ex` logs in the way a human would:
 
-## Architecture
+1. Fetch the login page, extract the CSRF token from the form
+2. POST username + password + CSRF
+3. Store the session cookies
+4. On any subsequent request that redirects back to `/user/login`, automatically re-authenticate
 
-11 source files, clean separation:
+Yes, this means storing credentials in plaintext. That's a conscious tradeoff — there's no way around it when you need to re-authenticate automatically against a login form. The README is upfront about it.
 
+## What You Get
+
+With `fj-ex` installed, your CI workflow goes from "open browser, navigate, click, wait, download" to:
+
+```bash
+# List recent runs
+fj-ex actions runs
+
+# Download logs for a specific job
+fj-ex actions logs job 42
+
+# Grab all artifacts from a run
+fj-ex actions artifacts download 15
+
+# Cancel a stuck run
+fj-ex actions cancel 15
+
+# Rerun a failed workflow
+fj-ex actions rerun 15
 ```
-src/
-├── main.rs         → Entry point, command dispatch
-├── cli.rs          → clap definitions (commands, args, subcommands)
-├── target.rs       → Host/repo resolution from flags, git remotes, env vars
-├── store.rs        → Credential store (JSON read/write, migration, repair)
-├── session.rs      → UiSession (HTTP client, cookie jar, login, auto-relogin)
-├── html.rs         → HTML attribute extraction, CSRF parsing
-├── login.rs        → Credential prompting (interactive, stdin, env vars)
-├── auth.rs         → Auth subcommand handlers
-├── actions.rs      → Actions command router
-├── ui_actions.rs   → The actual UI endpoint calls (workflows, runs, jobs, logs, artifacts)
-└── smoke_test.rs   → End-to-end validation sequence
-```
 
-**Tech stack:** Rust 2021, tokio async runtime, reqwest (rustls TLS), clap derive, git2 for remote inspection, serde for JSON, eyre for error handling.
+All from the terminal, all respecting the same repo-targeting flags as `fj`.
 
-## What Makes It Different From `fj`
+## The Uncomfortable Truth About Scraping
 
-| | `fj` | `fj-ex` |
-|---|---|---|
-| **Interface** | Forgejo REST API | Web UI endpoints ("UI API") |
-| **Scope** | Full Forgejo coverage (repos, issues, PRs, releases, wiki, orgs…) | Actions only (logs, artifacts, cancel, rerun) |
-| **Auth** | OAuth / app tokens | Plaintext UI credentials + cookies |
-| **Relationship** | Standalone | Companion — same flag conventions, complements `fj` |
+Building on top of a web UI isn't elegant. It's fragile by nature — any change to Forgejo's HTML structure could break things. But the alternative was to either contribute the missing API endpoints upstream (a much larger effort) or keep clicking through the UI manually.
 
-The two tools coexist: `fj` for everything the API supports, `fj-ex` for the Actions features that only the web UI exposes. Same `--host/-H`, `--repo/-r`, `--remote/-R` muscle memory applies to both.
+Sometimes the pragmatic solution is the right one. `fj-ex` fills a real gap today, and if Forgejo eventually exposes these features through proper API endpoints, migrating away from the scraping approach will be straightforward.
 
-## Release Pipeline
-
-CI auto-publishes to crates.io on push to `master`, with automatic patch version bumping if the current version already exists. A separate release workflow builds cross-platform binaries (Linux x86_64, Windows x86_64, macOS aarch64) on tag push and uploads them to GitHub Releases.
+The tool is [available on crates.io](https://crates.io/crates/forgejo-cli-ex) with pre-built binaries for Linux, Windows, and macOS.
