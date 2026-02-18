@@ -30,6 +30,17 @@ johndoe:
       - title: "flickr"
         url: "https://flickr.com/johndoe"
 
+jkamsker:
+   name: Jonas Kamsker
+   username: jkamsker
+   site: http://jonas.kamsker.at/
+   avatar: jkamsker.png
+   bio: "Stuff doer since 2011"
+   email: ""
+   social:
+      - title: "github"
+        url: "https://github.com/JKamsker"
+
 xplor4r:
    name: Sujay kundu
    username: xplor4r
