@@ -5,7 +5,7 @@ summary: My AI agents need hands and feet to do CI/CD for me. GitHub's CLI gives
 author: jkamsker
 date: '2026-02-18 12:00:00 +0000'
 category: devlog
-thumbnail: /assets/img/posts/code.jpg
+thumbnail: /assets/img/posts/fj-ex-actions.webp
 keywords: rust, forgejo, cli, forgejo-actions, ci-cd, web-scraping, developer-tools, ai-agents
 tags: [rust, cli, devops]
 permalink: /blog/how-fj-ex-was-built/
