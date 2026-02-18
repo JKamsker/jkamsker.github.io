@@ -3,7 +3,7 @@ layout: post
 title: "Drafting Effective Tasks for AI Pair Programming"
 summary: A repeatable framework for briefing ChatGPT or GitHub Copilot X before diving into implementation work.
 author: jkamsker
-date: '2024-06-15 10:00:00 +0000'
+date: '2025-10-09 12:00:00 +0000'
 category: guides
 thumbnail: /assets/img/posts/code.jpg
 keywords: ai pair programming, chatgpt prompts, codex workflow, software planning, productivity

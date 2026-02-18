@@ -17,9 +17,9 @@ The [Forgejo CLI (`fj`)](https://codeberg.org/forgejo-contrib/forgejo-cli/) is a
 
 But there's a gap: **Forgejo Actions**. While `fj` can list tasks, manage variables/secrets, and dispatch workflows, it can't do what you actually need day-to-day: download full job logs, grab artifacts, cancel runs, or rerun failed jobs. These features simply aren't exposed (or aren't fully exposed) through the Forgejo API — they only exist in the web UI.
 
-## Phase 1: PowerShell Scripts in `pandocs`
+## Phase 1: PowerShell Scripts
 
-This didn't start as a prototype. It started as a set of PowerShell scripts living in `Scripts/Forgejo` inside the `pandocs` project (a work repo), built to automate day-to-day workflow — downloading logs, grabbing artifacts, cancelling and rerunning jobs. Practical tools to fill gaps that `fj` didn't cover.
+This didn't start as a prototype. It started as a set of PowerShell scripts living in an internal work repository, built to automate day-to-day workflow — downloading logs, grabbing artifacts, cancelling and rerunning jobs. Practical tools to fill gaps that `fj` didn't cover.
 
 Along the way, the scripts discovered that Forgejo's web UI embeds structured data in `data-*` HTML attributes (like `data-initial-post-response` for job lists, `data-initial-artifacts-response` for artifacts). You don't need a full browser or DOM parser — regex extraction on these well-structured attributes is enough.
 
