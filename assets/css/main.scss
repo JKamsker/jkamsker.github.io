@@ -83,8 +83,10 @@ html[data-theme="light"] {
 
 /* --- Container override for full-width layout (homepage) --- */
 
-body {
-  padding-top: 0px !important;
+@media (max-width: 991px) {
+  body {
+    padding-top: 0px !important;
+  }
 }
 
 .container-fluid {
@@ -261,7 +263,7 @@ input.switch.theme-toggle {
     left: 0;
     right: 0;
     width: 100%;
-    background: var(--bg-color);
+    background: var(--main-background-color);
     border-bottom: 1px solid var(--post-border);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     z-index: 100;
