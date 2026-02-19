@@ -111,7 +111,9 @@
     rel="stylesheet"
   />
   <!-- Devicons for skill/tech logos -->
+  {% if jekyll.environment != "production" %}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+  {% endif %}
   <!-- Favicon -->
   <link
     rel="icon"
