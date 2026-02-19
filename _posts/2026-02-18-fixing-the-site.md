@@ -5,7 +5,7 @@ summary: A client's legacy SilverStripe site was 500ing on every admin action th
 author: jkamsker
 date: '2026-02-18 12:00:00 +0000'
 category: devlog
-thumbnail: /assets/img/posts/fixing-the-site.webp
+thumbnail: /assets/img/posts/fixing-the-site.png
 keywords: silverstripe, php, legacy, ftp, debugging, cli-tooling, devops, production-firefighting, ai-agents
 tags: [php, cli, devops]
 permalink: /blog/fixing-the-site/
