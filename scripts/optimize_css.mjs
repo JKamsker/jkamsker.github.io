@@ -12,6 +12,27 @@ function ensureTrailingSlash(url) {
   return url.endsWith('/') ? url : `${url}/`;
 }
 
+function parseArgs(argv) {
+  const args = { _: [] };
+  for (let i = 0; i < argv.length; i += 1) {
+    const token = argv[i];
+    if (!token.startsWith('--')) {
+      args._.push(token);
+      continue;
+    }
+
+    const key = token.slice(2);
+    const next = argv[i + 1];
+    if (!next || next.startsWith('--')) {
+      args[key] = true;
+    } else {
+      args[key] = next;
+      i += 1;
+    }
+  }
+  return args;
+}
+
 async function fileExists(filePath) {
   try {
     await fs.access(filePath);
@@ -50,6 +71,77 @@ async function detectBasePrefix(buildDir) {
   }
 
   return '';
+}
+
+async function readBenchmarkUrls(benchmarkPath) {
+  const raw = await fs.readFile(benchmarkPath, 'utf8');
+  const data = JSON.parse(raw);
+  if (!data || !Array.isArray(data.urls) || data.urls.length === 0) {
+    throw new Error(`Invalid benchmark file (expected {\"urls\": [...] }): ${benchmarkPath}`);
+  }
+  return data.urls;
+}
+
+function urlPathname(input) {
+  try {
+    return new URL(input).pathname;
+  } catch {
+    return input;
+  }
+}
+
+async function resolveBenchmarkHtmlFiles({ buildDir, urls }) {
+  const htmlFiles = [];
+  const missing = [];
+
+  for (const url of urls) {
+    const pathname = urlPathname(url);
+    const normalized = pathname.startsWith('/') ? pathname : `/${pathname}`;
+    const relBase = normalized.replace(/^\//, '');
+
+    const candidates = [];
+    if (normalized === '/' || normalized === '') {
+      candidates.push(path.join(buildDir, 'index.html'));
+    } else if (normalized.endsWith('/')) {
+      candidates.push(path.join(buildDir, relBase, 'index.html'));
+      candidates.push(path.join(buildDir, relBase.replace(/\/$/, '.html')));
+    } else if (normalized.endsWith('.html')) {
+      candidates.push(path.join(buildDir, relBase));
+    } else {
+      candidates.push(path.join(buildDir, `${relBase}.html`));
+      candidates.push(path.join(buildDir, relBase, 'index.html'));
+    }
+
+    let found = null;
+    for (const candidate of candidates) {
+      if (await fileExists(candidate)) {
+        found = candidate;
+        break;
+      }
+    }
+
+    if (found) {
+      htmlFiles.push(found);
+    } else {
+      missing.push(url);
+    }
+  }
+
+  return { htmlFiles: Array.from(new Set(htmlFiles)), missing };
+}
+
+async function listBuildJsFiles(buildDir) {
+  const jsRoot = path.join(buildDir, 'assets', 'js');
+  if (!(await fileExists(jsRoot))) return [];
+  const all = await listFilesRecursive(jsRoot);
+  return all.filter((p) => p.toLowerCase().endsWith('.js'));
+}
+
+async function listGalleryHtmlFiles(buildDir) {
+  const galleryRoot = path.join(buildDir, 'gallery');
+  if (!(await fileExists(galleryRoot))) return [];
+  const all = await listFilesRecursive(galleryRoot);
+  return all.filter((p) => p.toLowerCase().endsWith('.html'));
 }
 
 function rebaseCssUrls({ cssText, sourcePathPosix, basePrefix, mode, remoteBaseUrl }) {
@@ -186,6 +278,20 @@ async function purgeAndMinifyCss({ cssText, buildDir, safelist }) {
   return minified;
 }
 
+async function purgeAndMinifyCssWithContent({ cssText, content, safelist }) {
+  const purger = new PurgeCSS();
+  const purged = await purger.purge({
+    content,
+    css: [{ raw: cssText }],
+    safelist,
+    defaultExtractor: (content) => content.match(/[A-Za-z0-9_-]+/g) ?? [],
+    keyframes: true,
+  });
+
+  const css = purged[0]?.css ?? cssText;
+  return csso.minify(css, { restructure: true }).css;
+}
+
 async function removeBundledFiles({ buildDir }) {
   const toRemove = [
     'assets/bower_components/lightgallery/dist/css/lightgallery.min.css',
@@ -207,9 +313,28 @@ async function removeBundledFiles({ buildDir }) {
 }
 
 async function main() {
-  const buildDir = path.resolve(process.argv[2] ?? 'build');
+  const args = parseArgs(process.argv.slice(2));
+  const buildDir = path.resolve(args._[0] ?? 'build');
   if (!(await fileExists(buildDir))) {
     throw new Error(`Build dir not found: ${buildDir}`);
+  }
+
+  let benchmark = null;
+  if (args.benchmark) {
+    const benchmarkPath = path.resolve(args.benchmark);
+    const urls = await readBenchmarkUrls(benchmarkPath);
+    const resolved = await resolveBenchmarkHtmlFiles({ buildDir, urls });
+    const jsFiles = await listBuildJsFiles(buildDir);
+    benchmark = {
+      urls,
+      htmlFiles: resolved.htmlFiles,
+      jsFiles,
+      missing: resolved.missing,
+      contentFiles: [...resolved.htmlFiles, ...jsFiles],
+    };
+    if (benchmark.htmlFiles.length === 0) {
+      throw new Error(`No benchmark HTML files resolved from ${benchmarkPath}`);
+    }
   }
 
   const basePrefix = await detectBasePrefix(buildDir);
@@ -226,6 +351,7 @@ async function main() {
     {
       outFile: 'vendor.css',
       safelist: baseSafelist,
+      contentFiles: benchmark?.contentFiles,
       sources: [
         {
           kind: 'file',
@@ -246,6 +372,7 @@ async function main() {
     },
     {
       outFile: 'vendor-devicon.css',
+      contentFiles: benchmark?.contentFiles,
       sources: [
         {
           kind: 'url',
@@ -257,6 +384,7 @@ async function main() {
     {
       outFile: 'vendor-lightgallery.css',
       safelist: lightgallerySafelist,
+      contentFiles: (await listGalleryHtmlFiles(buildDir)) || [],
       sources: [
         {
           kind: 'file',
@@ -270,11 +398,25 @@ async function main() {
   const writtenFiles = [];
   for (const bundle of bundles) {
     const raw = await buildCssBundle({ basePrefix, sources: bundle.sources });
-    const optimized = await purgeAndMinifyCss({
-      cssText: raw,
-      buildDir,
-      safelist: bundle.safelist ?? baseSafelist,
-    });
+    const safelist = bundle.safelist ?? baseSafelist;
+
+    let optimized;
+    if (bundle.contentFiles && bundle.contentFiles.length > 0) {
+      optimized = await purgeAndMinifyCssWithContent({
+        cssText: raw,
+        content: bundle.contentFiles,
+        safelist,
+      });
+    } else if (bundle.contentFiles && bundle.contentFiles.length === 0) {
+      optimized = csso.minify(raw, { restructure: true }).css;
+    } else {
+      optimized = await purgeAndMinifyCss({
+        cssText: raw,
+        buildDir,
+        safelist,
+      });
+    }
+
     const absOut = path.join(outDir, bundle.outFile);
     await fs.writeFile(absOut, optimized, 'utf8');
     writtenFiles.push(absOut);
@@ -283,16 +425,29 @@ async function main() {
   const mainCssPath = path.join(outDir, 'main.css');
   if (await fileExists(mainCssPath)) {
     const mainRaw = stripBom(await fs.readFile(mainCssPath, 'utf8'));
-    const mainOptimized = await purgeAndMinifyCss({
-      cssText: mainRaw,
-      buildDir,
-      safelist: purgeSafelist(),
-    });
+    const safelist = purgeSafelist();
+    const mainOptimized = benchmark?.contentFiles
+      ? await purgeAndMinifyCssWithContent({
+          cssText: mainRaw,
+          content: benchmark.contentFiles,
+          safelist,
+        })
+      : await purgeAndMinifyCss({
+          cssText: mainRaw,
+          buildDir,
+          safelist,
+        });
     await fs.writeFile(mainCssPath, mainOptimized, 'utf8');
   }
 
   await removeBundledFiles({ buildDir });
   process.stdout.write(`Wrote ${writtenFiles.map((p) => path.relative(process.cwd(), p)).join(', ')}\n`);
+
+  if (benchmark?.missing?.length) {
+    process.stderr.write(
+      `Warning: benchmark URLs did not resolve to HTML files in ${buildDir}: ${benchmark.missing.join(', ')}\n`
+    );
+  }
 }
 
 main().catch((err) => {

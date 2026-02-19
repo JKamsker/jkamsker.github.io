@@ -4,8 +4,8 @@
   "description": "Personal website and blog of Jonas Kamsker.",
   "private": true,
   "scripts": {
-    "optimize:css": "node scripts/optimize_css.mjs",
-    "build:prod": "bundle exec jekyll build && node scripts/optimize_css.mjs"
+    "optimize:css": "node scripts/optimize_css.mjs build --benchmark scripts/css_benchmark.json",
+    "build:prod": "bundle exec jekyll build && node scripts/optimize_css.mjs build --benchmark scripts/css_benchmark.json"
   },
   "type": "module",
   "devDependencies": {
