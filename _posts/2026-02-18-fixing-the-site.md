@@ -11,7 +11,7 @@ tags: [php, cli, devops]
 permalink: /blog/fixing-the-site/
 ---
 
-> **TL;DR:** A client's legacy SilverStripe site was 500ing on every admin workflow that mattered. The job was simple: build a bot to extract the data and send reports to my boss. I did that by lunch. Then my brain goblin wouldn't let it go. I haven't written PHP since the dark ages, but I got FTP access, built a CLI toolbox to give my AI agent eyes and legs, and let it track down the bugs semi-autonomously. Deployed fixes file-by-file over FTP. In 2026. A beautiful disaster.
+> **TL;DR:** A client's legacy SilverStripe site was 500ing on every admin workflow that mattered. The job was simple: build a bot to extract the data and send reports to my client. I did that by lunch. Then my brain goblin wouldn't let it go. I haven't written PHP since the dark ages, but I got FTP access, built a CLI toolbox to give my AI agent eyes and legs, and let it track down the bugs semi-autonomously. Deployed fixes file-by-file over FTP. In 2026. A beautiful disaster.
 
 ## A Confession
 
@@ -29,9 +29,9 @@ The existing workaround was... creative. Since the export was broken, someone ha
 
 I'll spare you my exact reaction. What I *said* was "I'll take a look at the site."
 
-The ask was straightforward: build a bot that extracts the data the admin panel can't export, and send the reports to my boss. That's it. No fixing the site. No debugging. Just get the data out.
+The ask was straightforward: build a bot that extracts the data the admin panel can't export, and send the reports to my client. That's it. No fixing the site. No debugging. Just get the data out.
 
-All I had to work with was my boss's admin login credentials and the live web UI. No server access. No FTP. No SSH. No deployment pipeline. Just a username, a password, and a website that 500'd if you looked at it funny.
+All I had to work with was my client's admin login credentials and the live web UI. No server access. No FTP. No SSH. No deployment pipeline. Just a username, a password, and a website that 500'd if you looked at it funny.
 
 The plan was simple: build the bot, get the data flowing, hand it over, walk away. A clean, scoped engagement. In and out. No long-term commitment.
 
@@ -41,7 +41,7 @@ You can probably guess how that went.
 
 First order of business: the client needed order exports *today*, and the export button was one of the things producing 500s. So I needed a workaround that bypassed the broken UI entirely.
 
-I wrote a Python exporter that logs into the admin panel - using my boss's credentials - and triggers the same SilverStripe GridField export actions a human would click, except it does it over HTTP, with structured logging, and without crashing. Added redaction to the HTTP logs so cookies and CSRF tokens wouldn't end up in version control, because I've read enough post-mortems to know that's how you get a *second* incident.
+I wrote a Python exporter that logs into the admin panel - using my client's credentials - and triggers the same SilverStripe GridField export actions a human would click, except it does it over HTTP, with structured logging, and without crashing. Added redaction to the HTTP logs so cookies and CSRF tokens wouldn't end up in version control, because I've read enough post-mortems to know that's how you get a *second* incident.
 
 Even while the building was on fire, I refactored the exporter into a clean `src/` layout with shared modules, consolidated the helper code, and ran `python -m compileall` as a sanity check. Professionalism is a disease - you can't turn it off even when you should.
 
