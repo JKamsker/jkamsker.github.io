@@ -95,8 +95,8 @@
 .blog-page__list {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  background: var(--post-border);
+  gap: 0;
+  background: var(--main-background-color);
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--post-border);
@@ -105,6 +105,11 @@
 .blog-card {
   display: flex;
   gap: 24px;
+  border-top: 1px solid var(--post-border);
+
+  &:first-child {
+    border-top: none;
+  }
   padding: 28px 24px;
   background: var(--main-background-color);
   text-decoration: none !important;
@@ -493,7 +498,7 @@
 
 /* --- Blog Listing Responsive --- */
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .blog-page__layout {
     grid-template-columns: 1fr;
     gap: 40px;
