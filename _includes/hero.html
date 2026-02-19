@@ -2,7 +2,7 @@
 /* change cover_img in config.yml */
 .jumbotron {
     background-color: var(--main-background-color) !important;
-    background-image: url('/assets/img/{{site.hero_cover_img}}');
+    background-image: url("{{ '/assets/img/' | append: site.hero_cover_img | relative_url }}");
     text-align: center;
     background-attachment: fixed;
     background-size: cover;
@@ -20,15 +20,15 @@
 
 <!-- home hero section -->
 <div class="jumbotron">
-  <img class="author-profile-img" src="{{site.url}}{{site.baseurl}}/assets/img/{{site.author_logo}}" />
+  <img class="author-profile-img" src="{{ '/assets/img/' | append: site.author_logo | relative_url }}" />
   <p class="jumbotron-heading">Hi, I’m {{site.author}}.</p>
 
   <p class="lead" id="typewriteText"></p>
   <div class="jumbotron-btns">
-    <a href="{{site.url}}{{site.baseurl}}/blog/">
+    <a href="{{ '/blog/' | relative_url }}">
       <button class="btn btn-md btn-warning"><strong>Blog</strong></button>
     </a>
-    <a href="{{site.url}}{{site.baseurl}}/about/#author_projects">
+    <a href="{{ '/about/#author_projects' | relative_url }}">
       <button class="btn btn-md btn-default"><strong>Projects</strong></button>
     </a>
   </div>

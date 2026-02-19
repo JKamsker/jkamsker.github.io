@@ -5,7 +5,7 @@
     <p class="post-summary">
       Posted by : {% if page.author %}
       <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name"><a href="{{site.url}}{{site.baseurl}}/blog/authors/{{page.author}}">{{ page.author }}</a></span> </span
+        <span itemprop="name"><a href="{{ '/blog/authors/' | append: page.author | relative_url }}">{{ page.author }}</a></span> </span
       >{% endif %} on
       <time datetime="{{ page.date }}" itemprop="datePublished"
         >{{ page.date | date: "%b %-d, %Y" }}</time
@@ -15,7 +15,7 @@
       {% if post %} {% assign categories = post.categories %} {% else %} {%
       assign categories = page.categories %} {% endif %} Category : {% for
       category in categories %}
-      <a href="{{site.baseurl}}/blog/categories/{{category|slugize}}"
+      <a href="{{ '/blog/categories/' | append: category | slugize | relative_url }}"
         >{{category}}</a
       >
       {% unless forloop.last %}&nbsp;{% endunless %} {% endfor %}
@@ -25,7 +25,7 @@
   <div class="card-body" itemprop="articleBody">
     <img
       class="card-img-top"
-      src="{{site.url}}{{site.baseurl}}{{ page.thumbnail }}"
+      src="{{ page.thumbnail | relative_url }}"
       alt="{{ post.title }}"
     />
     <br />

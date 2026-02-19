@@ -3,7 +3,7 @@ services:
     build:
       context: .
       args:
-        build_command: "bundle exec jekyll serve --host 0.0.0.0 --livereload --watch --force_polling --incremental --destination /tmp/jekyll-site"
+        build_command: "bundle exec jekyll serve --config _config.yml,_config.dev.yml --host 0.0.0.0 --livereload --watch --force_polling --destination /tmp/jekyll-site"
     environment:
       - JEKYLL_ENV=development
     volumes:
@@ -28,6 +28,7 @@ services:
       - "./install.md:/srv/jekyll/install.md"
       - "./sponsors.md:/srv/jekyll/sponsors.md"
       - "./_config.yml:/srv/jekyll/_config.yml"
+      - "./_config.dev.yml:/srv/jekyll/_config.dev.yml"
       - "jekyll-cache:/srv/jekyll/.jekyll-cache"
     ports:
       - 4000:4000
