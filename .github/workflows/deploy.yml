@@ -56,6 +56,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Optimize images (WebP + resize)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pillow pyyaml
+          python scripts/optimize_images.py --write --delete-originals --optimize-existing-webp
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -87,6 +98,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Optimize images (WebP + resize)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pillow pyyaml
+          python scripts/optimize_images.py --write --delete-originals --optimize-existing-webp
 
       - name: setup ruby
         uses: ruby/setup-ruby@v1
