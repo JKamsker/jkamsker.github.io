@@ -9,12 +9,14 @@ thumbnail: /assets/img/posts/zerotier-network.webp
 keywords: zerotier, vpn, raspberry-pi, networking, cron, workaround, linux
 tags: [linux, networking, devops]
 permalink: /blog/zerotier-stops-working/
+last_modified_at: '2026-02-19 00:00:00 +0000'
+noindex: true
 ---
 
-## The Problem: ZeroTier Stops Working
 ZeroTier has been a reliable solution for establishing VPN connections between devices, even when they are located behind NAT. However, after installing ZeroTier on my brother's Raspberry Pi home server, I encountered a baffling issue: it would work fine for the first hour or so, and then lose connection from outside. The only way to re-establish the connection was to reboot the Raspberry Pi.
 
 This problem was further compounded by the fact that if I had an ongoing file copy operation, I could still connect to the Raspberry Pi from the specific machine involved in the transfer. But if I switched to another device, like my laptop, I couldn't connect at all. The `sudo zerotier-cli info` command showed the status as "OFFLINE."
+
 ## The Investigation: Searching for the Root Cause
 After scouring the internet for answers and receiving advice from fellow Redditors, I opted for a workaround instead of pinpointing the root cause. This involved creating a script that checks ZeroTier's status periodically and restarts the service if it's offline.
 
@@ -60,5 +62,4 @@ done
 By implementing this workaround, I managed to bypass the issue and ensure that ZeroTier remains functional on my brother's Raspberry Pi home server. While I didn't identify the root cause of the problem, this solution has been effective in keeping the connection stable and preventing any disruptions.
 ## Conclusion
 Sometimes, finding the root cause of an issue can be like searching for a needle in a haystack. In cases like these, it's essential to focus on finding a reliable workaround that can keep things running smoothly. In my case, a simple script and a cron job were enough to prevent ZeroTier from going offline and maintain a stable connection.
-
-I hope you found this blog entry interesting and informative! Stay tuned for more exciting adventures in the world of technology and problem-solving.
+I never pinned down the underlying cause (and at the time I cared more about keeping the box reachable than doing deep archaeology), but this watchdog approach kept the connection stable.

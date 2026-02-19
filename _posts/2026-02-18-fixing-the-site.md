@@ -9,6 +9,34 @@ thumbnail: /assets/img/posts/fixing-the-site.png
 keywords: silverstripe, php, legacy, ftp, debugging, cli-tooling, devops, production-firefighting, ai-agents
 tags: [php, cli, devops]
 permalink: /blog/fixing-the-site/
+last_modified_at: '2026-02-19 00:00:00 +0000'
+faq:
+  - q: "Why didn't you just set up SSH?"
+    a: >-
+      They gave me SSH after I'd already fixed everything.
+      You work with the door they give you, even if that door is FTP.
+  - q: "You uploaded a web shell to production?"
+    a: >-
+      A temporary one for diagnostic purposes, removed afterwards.
+      When your only access is FTP and you need to understand the server environment now, you do what the situation demands.
+  - q: "Isn't this just a glorified set of `curl` scripts?"
+    a: >-
+      Yes, but with guardrails, unit tests, structured logging, and documentation.
+      That's the difference between a hack and a tool.
+  - q: "Why Python for the exporter?"
+    a: "Because it needed to exist in an hour, not be beautiful."
+  - q: "You wrote unit tests during a production firefight?"
+    a: "Yes. For the FTP helpers and the DB read-only guardrails."
+  - q: "How much did the AI agent actually do?"
+    a: >-
+      More than me, honestly. I built the toolbox and guardrails; the agent did the actual SilverStripe archaeology and patches.
+      I still had to supervise (and stop it from doing unsafe things), but it carried most of the debugging load.
+  - q: "Why didn't you just stop at the bot?"
+    a: "Because the brain goblin doesn't negotiate."
+  - q: "Will you ever stop being dramatic about FTP?"
+    a: "No. It's 2026 and I deployed production fixes by uploading PHP files one at a time."
+  - q: "Do you actually enjoy this kind of work?"
+    a: "I know what I said. Don't judge me."
 ---
 
 > **TL;DR:** A client's legacy SilverStripe site was 500ing on every admin workflow that mattered. The job was simple: build a bot to extract the data and send reports to my client. I did that by lunch. Then my brain goblin wouldn't let it go. I haven't written PHP since the dark ages, but I got FTP access, built a CLI toolbox to give my AI agent eyes and legs, and let it track down the bugs semi-autonomously. Deployed fixes file-by-file over FTP. In 2026. A beautiful disaster.

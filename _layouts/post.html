@@ -19,13 +19,43 @@ layout: default
       </div>
     </div>
     <div class="post-bottom-card">
-      <h4 class="post-bottom-card__title">Explore</h4>
+      <h4 class="post-bottom-card__title">Related Posts</h4>
       <div>
-        {% for i in site.urls %}
-        <li>
-          <a href="{{ i.url | relative_url }}">{{ i.text }}</a>
-        </li>
-        {% endfor %}
+        {% assign shown = 0 %}
+        {% assign printed = "|" %}
+        {% assign current_category = page.category %}
+        {% unless current_category %}
+          {% assign current_category = page.categories | first %}
+        {% endunless %}
+
+        <ul>
+          {% if current_category and site.categories[current_category] %}
+            {% for post in site.categories[current_category] %}
+              {% if post.url != page.url and shown < 3 %}
+                <li>
+                  <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+                </li>
+                {% assign shown = shown | plus: 1 %}
+                {% assign printed = printed | append: post.url | append: "|" %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+
+          {% if shown < 3 %}
+            {% for post in site.posts %}
+              {% if post.url != page.url and shown < 3 %}
+                {% assign marker = "|" | append: post.url | append: "|" %}
+                {% unless printed contains marker %}
+                  <li>
+                    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+                  </li>
+                  {% assign shown = shown | plus: 1 %}
+                  {% assign printed = printed | append: post.url | append: "|" %}
+                {% endunless %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </ul>
       </div>
     </div>
   </div>

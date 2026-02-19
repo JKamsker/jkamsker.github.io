@@ -1,145 +1,169 @@
 {% comment %}
   Schema.org JSON-LD structured data.
-  Outputs the appropriate schema block(s) based on page.layout.
+  Emits base WebSite + Person blocks on every page, plus layout-specific blocks.
 {% endcomment %}
 
 {% assign site_url = site.url | append: site.baseurl %}
+{% assign website_id = site_url | append: '/#website' %}
+{% assign person_id = site_url | append: '/about/#person' %}
 {% assign author_image = site_url | append: '/assets/img/' | append: site.author_logo %}
+{% assign language = page.lang | default: site.lang | default: 'en' %}
 
-{% comment %} ── WebSite (every page) ── {% endcomment %}
+{% capture same_as_items %}
+  {% if site.github_username %}, "https://github.com/{{ site.github_username }}"{% endif %}
+  {% if site.linkedin_username %}, "https://linkedin.com/in/{{ site.linkedin_username }}"{% endif %}
+  {% if site.twitter_username %}, "https://twitter.com/{{ site.twitter_username }}"{% endif %}
+{% endcapture %}
+{% assign same_as_items = same_as_items | strip | remove_first: "," | strip %}
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "{{ site.title | escape }}",
-  "url": "{{ site_url }}",
-  "description": "{{ site.description | escape }}",
-  "author": {
-    "@type": "Person",
-    "name": "{{ site.author | escape }}"
+  "@id": {{ website_id | jsonify }},
+  "name": {{ site.title | jsonify }},
+  "url": {{ site_url | jsonify }},
+  "description": {{ site.description | jsonify }},
+  "inLanguage": {{ language | jsonify }},
+  "publisher": {
+    "@id": {{ person_id | jsonify }}
   }
 }
 </script>
 
-{% comment %} ── Homepage ── {% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": {{ person_id | jsonify }},
+  "name": {{ site.author | jsonify }},
+  "url": {{ (site_url | append: "/about/") | jsonify }},
+  "image": {{ author_image | jsonify }},
+  "jobTitle": {{ ".NET Developer" | jsonify }},
+  "description": {{ site.author_bio | jsonify }}{% if site.author_location %},
+  "homeLocation": {
+    "@type": "Place",
+    "name": {{ site.author_location | jsonify }}
+  }{% endif %}{% if same_as_items != "" %},
+  "sameAs": [{{ same_as_items }}]{% endif %}
+}
+</script>
+
 {% if page.layout == "home" %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "ProfilePage",
-  "mainEntity": {
-    "@type": "Person",
-    "name": "{{ site.author | escape }}",
-    "url": "{{ site_url }}/about/",
-    "image": "{{ author_image }}",
-    "jobTitle": ".NET Developer",
-    "description": "{{ site.subtitle | escape }}",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Linz",
-      "addressCountry": "AT"
-    },
-    "sameAs": [
-      {% if site.github_username %}"https://github.com/{{ site.github_username }}"{% endif %}
-      {% if site.linkedin_username %},"https://linkedin.com/in/{{ site.linkedin_username }}"{% endif %}
-    ]
-  }
+  "@id": {{ (page.url | absolute_url | append: "#profile") | jsonify }},
+  "url": {{ page.url | absolute_url | jsonify }},
+  "name": {{ site.title | jsonify }},
+  "description": {{ page.summary | default: site.description | jsonify }},
+  "inLanguage": {{ language | jsonify }},
+  "isPartOf": { "@id": {{ website_id | jsonify }} },
+  "mainEntity": { "@id": {{ person_id | jsonify }} }
 }
 </script>
 {% endif %}
 
-{% comment %} ── About page ── {% endcomment %}
 {% if page.layout == "about-me" %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "ProfilePage",
-  "mainEntity": {
-    "@type": "Person",
-    "name": "{{ site.author | escape }}",
-    "url": "{{ site_url }}/about/",
-    "image": "{{ author_image }}",
-    "jobTitle": ".NET Developer",
-    "description": "{{ site.author_bio | escape }}",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Linz",
-      "addressCountry": "AT"
-    },
-    "sameAs": [
-      {% if site.github_username %}"https://github.com/{{ site.github_username }}"{% endif %}
-      {% if site.linkedin_username %},"https://linkedin.com/in/{{ site.linkedin_username }}"{% endif %}
-    ]
-  }
+  "@id": {{ (page.url | absolute_url | append: "#profile") | jsonify }},
+  "url": {{ page.url | absolute_url | jsonify }},
+  "name": {{ page.title | append: " - " | append: site.title | jsonify }},
+  "description": {{ page.summary | default: site.description | jsonify }},
+  "inLanguage": {{ language | jsonify }},
+  "isPartOf": { "@id": {{ website_id | jsonify }} },
+  "mainEntity": { "@id": {{ person_id | jsonify }} }
 }
 </script>
 {% endif %}
 
-{% comment %} ── Blog listing page ── {% endcomment %}
 {% if page.layout == "blog" %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  "name": "Blog",
-  "url": "{{ site_url }}/blog/",
-  "description": "Articles by {{ site.author | escape }}",
-  "isPartOf": {
-    "@type": "WebSite",
-    "name": "{{ site.title | escape }}",
-    "url": "{{ site_url }}"
-  }
+  "@id": {{ (page.url | absolute_url | append: "#collection") | jsonify }},
+  "url": {{ page.url | absolute_url | jsonify }},
+  "name": {{ page.title | default: "Blog" | jsonify }},
+  "description": {{ page.summary | default: site.description | jsonify }},
+  "inLanguage": {{ language | jsonify }},
+  "isPartOf": { "@id": {{ website_id | jsonify }} },
+  "about": { "@id": {{ person_id | jsonify }} }
 }
 </script>
 {% endif %}
 
-{% comment %} ── Individual blog posts ── {% endcomment %}
-{% if page.layout == "post" %}
-{% if page.thumbnail %}
-  {% assign post_image = page.thumbnail %}
-{% else %}
-  {% assign post_image = '/assets/img/' | append: site.hero_cover_img %}
+{% if page.layout == "category" %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": {{ (page.url | absolute_url | append: "#collection") | jsonify }},
+  "url": {{ page.url | absolute_url | jsonify }},
+  "name": {{ page.title | jsonify }},
+  "description": {{ page.summary | default: site.description | jsonify }},
+  "inLanguage": {{ language | jsonify }},
+  "isPartOf": { "@id": {{ website_id | jsonify }} },
+  "about": { "@id": {{ person_id | jsonify }} }
+}
+</script>
 {% endif %}
+
+{% if page.layout == "author" %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "@id": {{ (page.url | absolute_url | append: "#profile") | jsonify }},
+  "url": {{ page.url | absolute_url | jsonify }},
+  "name": {{ page.title | default: site.title | jsonify }},
+  "description": {{ page.summary | default: page.bio | default: site.description | jsonify }},
+  "inLanguage": {{ language | jsonify }},
+  "isPartOf": { "@id": {{ website_id | jsonify }} },
+  "mainEntity": { "@id": {{ person_id | jsonify }} }
+}
+</script>
+{% endif %}
+
+{% if page.layout == "post" %}
 {% assign words = page.content | number_of_words %}
+{% assign post_description = page.summary | default: page.excerpt | strip_html | strip_newlines | truncate: 200 %}
+{% if page.thumbnail %}
+  {% assign post_image = page.thumbnail | absolute_url %}
+{% elsif site.hero_cover_img %}
+  {% assign post_image = '/assets/img/' | append: site.hero_cover_img | absolute_url %}
+{% endif %}
+{% if page.last_modified_at %}
+  {% assign post_modified = page.last_modified_at | date_to_xmlschema %}
+{% else %}
+  {% assign post_modified = page.date | date_to_xmlschema %}
+{% endif %}
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
+  "@id": {{ (page.url | absolute_url | append: "#blogposting") | jsonify }},
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "{{ page.url | absolute_url }}"
+    "@id": {{ page.url | absolute_url | jsonify }}
   },
-  "headline": "{{ page.title | escape }}",
-  "description": "{{ page.summary | default: page.excerpt | strip_html | truncate: 200 | escape }}",
-  "image": "{{ post_image | absolute_url }}",
-  "datePublished": "{{ page.date | date_to_xmlschema }}",
-  {% if page.last_modified_at %}
-  "dateModified": "{{ page.last_modified_at | date_to_xmlschema }}",
-  {% else %}
-  "dateModified": "{{ page.date | date_to_xmlschema }}",
-  {% endif %}
+  "headline": {{ page.title | jsonify }},
+  "description": {{ post_description | jsonify }},
+  "image": {{ post_image | jsonify }},
+  "datePublished": {{ (page.date | date_to_xmlschema) | jsonify }},
+  "dateModified": {{ post_modified | jsonify }},
   "wordCount": {{ words }},
-  "author": {
-    "@type": "Person",
-    "name": "{{ site.author | escape }}",
-    "url": "{{ site_url }}/about/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "{{ site.title | escape }}",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "{{ author_image }}"
-    }
-  },
-  {% if page.category %}
-  "articleSection": "{{ page.category | escape }}",
-  {% endif %}
-  {% if page.keywords %}
-  "keywords": "{{ page.keywords | escape }}"
-  {% else %}
-  "keywords": "{% if page.tags %}{{ page.tags | join: ', ' | escape }}{% endif %}"
-  {% endif %}
+  "inLanguage": {{ language | jsonify }},
+  "author": { "@id": {{ person_id | jsonify }} },
+  "publisher": { "@id": {{ person_id | jsonify }} },
+  "isPartOf": { "@id": {{ website_id | jsonify }} }{% if page.category %},
+  "articleSection": {{ page.category | jsonify }}{% endif %}{% if page.tags %},
+  "keywords": {{ page.tags | jsonify }}{% endif %}
 }
 </script>
 
@@ -147,26 +171,49 @@
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  "@id": {{ (page.url | absolute_url | append: "#breadcrumbs") | jsonify }},
   "itemListElement": [
     {
       "@type": "ListItem",
       "position": 1,
       "name": "Home",
-      "item": "{{ site_url }}/"
+      "item": {{ (site_url | append: "/") | jsonify }}
     },
     {
       "@type": "ListItem",
       "position": 2,
       "name": "Blog",
-      "item": "{{ site_url }}/blog/"
+      "item": {{ (site_url | append: "/blog/") | jsonify }}
     },
     {
       "@type": "ListItem",
       "position": 3,
-      "name": "{{ page.title | escape }}",
-      "item": "{{ page.url | absolute_url }}"
+      "name": {{ page.title | jsonify }},
+      "item": {{ page.url | absolute_url | jsonify }}
     }
   ]
 }
 </script>
+
+{% if page.faq %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": {{ (page.url | absolute_url | append: "#faq") | jsonify }},
+  "mainEntity": [
+    {% for item in page.faq %}
+    {
+      "@type": "Question",
+      "name": {{ item.q | jsonify }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ item.a | jsonify }}
+      }
+    }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
 {% endif %}

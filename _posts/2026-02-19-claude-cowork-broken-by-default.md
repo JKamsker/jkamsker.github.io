@@ -9,6 +9,31 @@ thumbnail: /assets/img/posts/cowork-windows.jpg
 keywords: claude, cowork, windows, debugging, vm, networking, winnat, virtiofs, powershell
 tags: [windows, debugging, devops]
 permalink: /blog/cowork-windows-broken/
+last_modified_at: '2026-02-19 00:00:00 +0000'
+faq:
+  - q: "Why did WinNAT disappear?"
+    a: >-
+      Best guess: a Windows Update, a VPN install, or a Hyper-V reconfiguration silently cleared it.
+      Windows doesn't warn you; it just lets NAT rules evaporate.
+  - q: "Will this happen again?"
+    a: "Probably. WinNAT has the persistence of a New Year's resolution. Check `Get-NetNat` after major updates."
+  - q: "Wait, so Cowork, WSL2, and Docker are all separate VMs?"
+    a: >-
+      Not exactly. WSL2 runs a lightweight utility VM, and multiple WSL2 distros share that same underlying VM/kernel.
+      Docker Desktop can run either inside WSL2 (as the `docker-desktop` distro) or as a separate Hyper-V VM depending on configuration.
+      Cowork appears to run work in its own isolated VM environment and creates its own networking artifacts (like `cowork-vm-nat`).
+  - q: "Does Cowork break WSL2?"
+    a: >-
+      It can. Issue #26216 documents Cowork's virtual network (managed by HNS) permanently breaking WSL2's internet.
+      The fix is deleting the `cowork-vm-nat` network entry via
+      `Get-HnsNetwork | Where-Object { $_.Name -eq 'cowork-vm-nat' } | Remove-HnsNetwork`,
+      which you may need to redo every time Claude Desktop recreates it.
+  - q: "Is this a Cowork bug or a Windows bug?"
+    a: >-
+      Both. The error messages are Cowork's fault, but Windows silently dropping NAT configurations isn't Cowork's doing.
+      Cowork trusted Windows to hold its drink. Windows dropped it.
+  - q: "Can a non-developer fix this?"
+    a: "No. And that's the problem worth talking about."
 ---
 
 ## The Promise

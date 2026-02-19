@@ -172,7 +172,7 @@ defaults:
       type: authors
     values:
       layout: author
-      permalink: /blog/authors/:slug
+      permalink: /blog/authors/:slug/
   -
     scope:
       path: 'assets'

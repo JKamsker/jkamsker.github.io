@@ -9,6 +9,8 @@ thumbnail: /assets/img/posts/ai-task-prompts.webp
 keywords: ai pair programming, chatgpt prompts, codex workflow, software planning, productivity
 tags: [ai, workflow, productivity]
 permalink: /blog/drafting-effective-ai-task-prompts/
+last_modified_at: '2026-02-19 00:00:00 +0000'
+noindex: true
 ---
 
 When I use ChatGPT or GitHub Copilot X (the Codex web UI) as my remote programming partner, the quality of the help I receive depends on the clarity of the brief I give it. The raw notes below evolved into a structured ritual that keeps the conversation focused on outcomes instead of diving into premature implementation details. This article distills that routine into a reusable, human-readable checklist.

@@ -9,6 +9,8 @@ thumbnail: /assets/img/posts/ai-distilling-funnel.webp
 keywords: ai code review, codex workflow, pull request evaluation, software process, productivity
 tags: [ai, workflow, git]
 permalink: /blog/distilling-ai-generated-iterations/
+last_modified_at: '2026-02-19 00:00:00 +0000'
+noindex: true
 ---
 
 Generating several candidate implementations with Codex is easy; choosing the right one (and capturing the learnings) is the real art. These notes outline how I shepherd multiple AI-produced branches through a structured review so that the best ideas survive and the rest inform future work.

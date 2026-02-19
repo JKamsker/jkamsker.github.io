@@ -106,8 +106,8 @@ layout: default
         <ul class="blog-sidebar__list">
           {% for author in site.authors %}
           <li>
-            <a href="/blog/authors/{{ author.username }}" class="blog-sidebar__link">
-              {{ author.name }}
+            <a href="{{ '/blog/authors/' | append: author.username | append: '/' | relative_url }}" class="blog-sidebar__link">
+              {{ author.display_name | default: author.username }}
             </a>
           </li>
           {% endfor %}

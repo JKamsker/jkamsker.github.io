@@ -9,6 +9,16 @@ thumbnail: /assets/img/posts/fj-ex-actions.webp
 keywords: rust, forgejo, cli, forgejo-actions, ci-cd, web-scraping, developer-tools, ai-agents
 tags: [rust, cli, devops]
 permalink: /blog/how-fj-ex-was-built/
+last_modified_at: '2026-02-19 00:00:00 +0000'
+faq:
+  - q: "Does this break if Forgejo changes the UI?"
+    a: "Yes. That's the pact. I scrape, they ship, I pray."
+  - q: "Is storing session cookies ideal?"
+    a: "No. But neither is opening a browser in 2026 to check if a build passed."
+  - q: "Why Rust?"
+    a: "Because the alternative was maintaining PowerShell, and I've suffered enough."
+  - q: "Will you replace scraping with a real API later?"
+    a: "The day Forgejo exposes Actions in the API, I will refactor with mass joy and mass `cargo rm`."
 ---
 
 > **TL;DR:** Forgejo Actions has no usable API or CLI surface for runs, logs, or artifacts. I built [`fj-ex`](https://github.com/JKamsker/forgejo-cli-ex), a `fj`-style companion that scrapes the web UI's embedded JSON so humans *and* AI agents can manage CI from the terminal. Yes, it's scraping. No, I don't feel bad about it.

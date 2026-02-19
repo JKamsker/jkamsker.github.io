@@ -7,7 +7,7 @@ layout: default
   <div class="blog-page__header">
     <div>
       <span class="blog-page__label">Author</span>
-      <h1 class="blog-page__title">{{ page.name }}</h1>
+      <h1 class="blog-page__title">{{ page.display_name | default: page.username }}</h1>
     </div>
     <a class="blog-page__back" href="{{ '/blog' | relative_url }}">
       <i class="fa fa-arrow-left"></i> All Articles
@@ -17,7 +17,7 @@ layout: default
   <div class="author-profile">
     {% if page.avatar %}
     <div class="author-profile__avatar-ring">
-      <img src="{{ '/assets/img/authors/' | append: page.avatar | relative_url }}" alt="{{ page.name }}" />
+      <img src="{{ '/assets/img/authors/' | append: page.avatar | relative_url }}" alt="{{ page.display_name | default: page.username }}" />
     </div>
     {% endif %}
     {% if page.bio %}

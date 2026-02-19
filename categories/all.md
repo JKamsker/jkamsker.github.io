@@ -1,6 +1,8 @@
 ---
 layout: default
+title: Categories
 permalink: /blog/categories/
+summary: "Browse all blog categories and find posts by topic."
 ---
 
 <div class="blog-page">
