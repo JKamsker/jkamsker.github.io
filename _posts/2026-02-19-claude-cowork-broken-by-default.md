@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Claude Cowork on Windows: Broken by Default"
+title: "Broken by Default: Claude Cowork on Windows"
 summary: Claude Cowork is broken by default on Windows. This is my journey figuring out why - and how to fix it.
 author: jkamsker
 date: '2026-02-19 12:00:00 +0000'
