@@ -1,44 +1,37 @@
-<section id="recent-articles">
-  <div id="recent-articles-header">
-    <div id="recent-articles-title">
-      <h1 class="card-title">Recent Articles</h1>
+<section class="recent-posts">
+  <div class="recent-posts__header">
+    <div>
+      <span class="recent-posts__label">Latest</span>
+      <h2 class="recent-posts__title">Recent Articles</h2>
     </div>
-    <div id="recent-articles-show-all">
-      <a class="btn btn-lg btn-dark" href="{{ '/blog' | relative_url }}"> View All </a>
-    </div>
+    <a class="recent-posts__view-all" href="{{ '/blog' | relative_url }}">
+      View All <i class="fa fa-arrow-right"></i>
+    </a>
   </div>
-  <br />
 
-  <ul>
+  <div class="recent-posts__list">
     {% for post in site.posts limit:5 %}
-    <li class="article-card">
-      <a href="{{ post.url | relative_url }}" class="article-card-link">
-        <div id="article-container">
-          <div id="article-img">
-            {% if post.author %}
-              {% assign author = post.author %}
-              {% if author %}
-               {% assign author_data = site.data.authors[author] %}
-               <img
-                src="{{ '/assets/img/authors/' | append: author_data.avatar | relative_url }}"
-                width="50px"
-                height="50px"
-             />
-              {% endif %}
-            {% endif %}
-
-          </div>
-          <div id="article-link">
-              <p class="recent-article-link">{{post.title}} <span style="color: #ccc; font-size: 15px;"> - <i><time datetime="{{ post.date }}" itemprop="datePublished">{{ post.date | date: "%b %-d, %Y" }}</time></i></span></p>
-            </div>
-            <div id="article-alert">
-            {% for cat in post.category limit:1 %}
-             <button class="btn btn-sm btn-dark">{{cat}}</button>
-            {% endfor %}
-            </div>
+    <a href="{{ post.url | relative_url }}" class="recent-posts__card">
+      {% if post.thumbnail %}
+      <div class="recent-posts__card-thumb">
+        <img src="{{ post.thumbnail | relative_url }}" alt="{{ post.title }}" />
+      </div>
+      {% endif %}
+      <div class="recent-posts__card-body">
+        <div class="recent-posts__card-meta">
+          <span class="recent-posts__card-date">
+            <time datetime="{{ post.date }}">{{ post.date | date: "%b %-d, %Y" }}</time>
+          </span>
+          {% for cat in post.category limit:1 %}
+          <span class="recent-posts__card-category">{{ cat }}</span>
+          {% endfor %}
         </div>
-      </a>
-    </li>
+        <h3 class="recent-posts__card-title">{{ post.title }}</h3>
+        {% if post.summary %}
+        <p class="recent-posts__card-summary">{{ post.summary | truncate: 120 }}</p>
+        {% endif %}
+      </div>
+    </a>
     {% endfor %}
-  </ul>
+  </div>
 </section>

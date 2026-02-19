@@ -1,35 +1,27 @@
-<style>
-/* change cover_img in config.yml */
-.jumbotron {
-    background-color: var(--main-background-color) !important;
-    background-image: url("{{ '/assets/img/' | append: site.hero_cover_img | relative_url }}");
-    text-align: center;
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: center;
-}
-.jumbotron-btns {
-  display: block;
-  margin-top: 50px;
-}
-
-.jumbotron-heading, .lead {
-  color: #fff;
-}
-</style>
-
 <!-- home hero section -->
-<div class="jumbotron">
-  <img class="author-profile-img" src="{{ '/assets/img/' | append: site.author_logo | relative_url }}" />
-  <p class="jumbotron-heading">Hi, I’m {{site.author}}.</p>
-
-  <p class="lead" id="typewriteText"></p>
-  <div class="jumbotron-btns">
-    <a href="{{ '/blog/' | relative_url }}">
-      <button class="btn btn-md btn-warning"><strong>Blog</strong></button>
-    </a>
-    <a href="{{ '/about/#author_projects' | relative_url }}">
-      <button class="btn btn-md btn-default"><strong>Projects</strong></button>
-    </a>
+<section class="hero">
+  <div class="hero__inner">
+    <div class="hero__text">
+      <span class="hero__greeting">Hi, I'm</span>
+      <h1 class="hero__name">{{site.author}}</h1>
+      <p class="hero__typewrite" id="typewriteText"></p>
+      <div class="hero__actions">
+        <a href="{{ '/blog/' | relative_url }}" class="hero__btn hero__btn--primary">
+          <i class="fa fa-pen-nib"></i> Blog
+        </a>
+        <a href="{{ '/about/#author_projects' | relative_url }}" class="hero__btn hero__btn--secondary">
+          <i class="fab fa-github"></i> Projects
+        </a>
+      </div>
+    </div>
+    <div class="hero__avatar">
+      <div class="hero__avatar-ring">
+        <img src="{{ '/assets/img/' | append: site.author_logo | relative_url }}" alt="{{site.author}}" />
+      </div>
+    </div>
   </div>
-</div>
+  <div class="hero__scroll-hint">
+    <span>Scroll</span>
+    <div class="hero__scroll-line"></div>
+  </div>
+</section>
