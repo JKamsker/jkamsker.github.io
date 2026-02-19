@@ -237,6 +237,13 @@ input.switch.theme-toggle {
 }
 
 @media (max-width: 991px) {
+  #progress-bar {
+    margin-top: 0 !important;
+    top: 0;
+  }
+}
+
+@media (max-width: 991px) {
   #topNav {
     padding: 0 16px !important;
     height: 56px;
