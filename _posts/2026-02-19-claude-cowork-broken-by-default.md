@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Claude Cowork on Windows: Broken by Default"
-summary: Cowork wouldn't start. The error said "API unreachable." The host had internet. The VM didn't. Here's the three-layer debugging story of DNS, NAT, and a corrupted virtual disk.
+summary: Cowork said "API unreachable." The host had internet. The VM didn't. Three layers of broken, three PowerShell commands to fix.
 author: jkamsker
 date: '2026-02-19 12:00:00 +0000'
 category: devlog
@@ -11,7 +11,7 @@ tags: [windows, debugging, devops]
 permalink: /blog/cowork-windows-broken/
 ---
 
-> **TL;DR:** Claude Cowork on Windows runs inside its own dedicated Hyper-V Linux VM — separate from WSL2, separate from Docker. If WinNAT vanishes, the VM's DNS is empty, or the virtual disk gets corrupted, you get two misleading error messages and zero useful guidance. The fix is three PowerShell commands and a file rename. Yes, I spent hours figuring that out so you don't have to.
+> **TL;DR:** Claude Cowork is broken out of the box on Windows. This is my journey figuring out why — and how to fix it.
 
 ## The Promise
 
