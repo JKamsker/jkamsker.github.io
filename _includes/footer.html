@@ -2,9 +2,9 @@
   <div class="site-footer__inner">
     <span class="site-footer__name">{{ site.title }}</span>
     <div class="site-footer__links">
-      <a href="{{ "/feed.xml" | prepend: site.baseurl }}">RSS</a>
+      <a href="{{ "/feed.xml" | prepend: site.baseurl }}"><i class="fas fa-rss"></i> RSS</a>
       {% if site.github_username %}
-      <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener"><i class="fab fa-github"></i> GitHub</a>
       {% endif %}
     </div>
     <p class="site-footer__copy">&copy; {{ "now" | date: "%Y" }} {{ site.title }}</p>
