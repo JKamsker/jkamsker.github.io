@@ -3,6 +3,21 @@
           <a class="navbar-brand" href="{{ '/' | relative_url }}">
             <span class="navbar-brand__accent">J</span>Kamsker
           </a>
+
+          <ul class="nav nav-actions">
+            <li class="nav-item">
+              <a class="nav-link toggle-search-button" href="#search">
+                <i class="fa fa-search search-icon" aria-hidden="true"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <button class="theme-toggle" aria-label="Toggle dark/light mode">
+                <i class="fas fa-moon theme-toggle__icon theme-toggle__icon--dark"></i>
+                <i class="fas fa-sun theme-toggle__icon theme-toggle__icon--light"></i>
+              </button>
+            </li>
+          </ul>
+
           <button
             class="navbar-toggler"
             type="button"
@@ -14,6 +29,7 @@
           >
             <span class="icono-hamburger" id="navbar-hamburger"> </span>
           </button>
+
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
               {% for i in site.urls %}
@@ -25,23 +41,8 @@
                 >
               </li>
               {% endfor %}
-
             </ul>
           </div>
-          <ul class="nav justify-content-end nav-actions">
-            <li class="nav-item">
-              <a class="nav-link toggle-search-button" href="#search">
-                <i class="fa fa-search search-icon" aria-hidden="true"></i>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <button class="theme-toggle" aria-label="Toggle dark/light mode">
-                <i class="fas fa-moon theme-toggle__icon theme-toggle__icon--dark"></i>
-                <i class="fas fa-sun theme-toggle__icon theme-toggle__icon--light"></i>
-              </button>
-            </li>
-          </ul>
         </nav>
         <div id="progress-bar"></div>
         <!-- Search Form -->

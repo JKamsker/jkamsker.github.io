@@ -83,6 +83,10 @@ html[data-theme="light"] {
 
 /* --- Container override for full-width layout (homepage) --- */
 
+body {
+  padding-top: 0px !important;
+}
+
 .container-fluid {
   width: 100% !important;
   margin-left: auto !important;
@@ -121,7 +125,7 @@ html[data-theme="light"] {
 }
 
 #topNav .navbar-nav {
-  gap: 8px;
+  gap: clamp(8px, 3vw, 48px);
 }
 
 #topNav .navbar-nav .nav-link {
@@ -140,11 +144,18 @@ html[data-theme="light"] {
   background: rgba(232, 155, 62, 0.08);
 }
 
-/* Right-side actions */
+/* Right-side actions — placed before collapse in HTML so they stay in top bar on mobile */
 .nav-actions {
   gap: 4px;
   align-items: center !important;
-  margin-left: 0 !important;
+  margin-left: auto !important;
+}
+
+/* On desktop, reorder so nav links sit centered between brand and actions */
+@media (min-width: 992px) {
+  #topNav .navbar-brand { order: 1; }
+  #topNav .navbar-collapse { order: 2; }
+  .nav-actions { order: 3; }
 }
 
 .nav-actions .toggle-search-button {
@@ -226,13 +237,45 @@ input.switch.theme-toggle {
 @media (max-width: 991px) {
   #topNav {
     padding: 0 16px !important;
+    height: 56px;
+    position: relative;
+    flex-wrap: nowrap !important;
   }
+
+  /* Center the hamburger button */
+  #topNav .navbar-toggler {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Push actions to the right */
+  .nav-actions {
+    margin-left: auto !important;
+  }
+
+  /* Full-width dropdown panel below the header */
+  #topNav .navbar-collapse {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: var(--bg-color);
+    border-bottom: 1px solid var(--post-border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    z-index: 100;
+  }
+
   #topNav .navbar-nav {
     gap: 0;
-    padding: 12px 0;
+    padding: 16px 0;
+    align-items: center;
   }
+
   #topNav .navbar-nav .nav-link {
-    padding: 10px 16px !important;
+    padding: 12px 24px !important;
+    text-align: center;
   }
 }
 
