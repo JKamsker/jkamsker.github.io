@@ -1,0 +1,15 @@
+{
+  "name": "jkamsker.github.io",
+  "version": "1.0.0",
+  "description": "Personal website and blog of Jonas Kamsker.",
+  "private": true,
+  "scripts": {
+    "optimize:css": "node scripts/optimize_css.mjs",
+    "build:prod": "bundle exec jekyll build && node scripts/optimize_css.mjs"
+  },
+  "type": "module",
+  "devDependencies": {
+    "csso": "^5.0.5",
+    "purgecss": "^8.0.0"
+  }
+}

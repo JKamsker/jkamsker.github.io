@@ -79,6 +79,9 @@
 
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}" />
   <!-- <link rel="stylesheet" href="{{ '/assets/css/custom-style.css' | relative_url }}" /> -->
+  {% if jekyll.environment == "production" %}
+  <link rel="stylesheet" href="{{ '/assets/css/vendor.css' | relative_url }}" />
+  {% else %}
   <link
     rel="stylesheet"
     href="{{ '/assets/bower_components/lightgallery/dist/css/lightgallery.min.css' | relative_url }}"
@@ -95,6 +98,7 @@
     rel="stylesheet"
     href="{{ '/assets/bower_components/icono/dist/icono.min.css' | relative_url }}"
   />
+  {% endif %}
   <!-- Fonts-->
   <link
     href="https://fonts.googleapis.com/css?family=Quicksand&display=swap"
