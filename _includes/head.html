@@ -81,11 +81,13 @@
   <!-- <link rel="stylesheet" href="{{ '/assets/css/custom-style.css' | relative_url }}" /> -->
   {% if jekyll.environment == "production" %}
   <link rel="stylesheet" href="{{ '/assets/css/vendor.css' | relative_url }}" />
+  {% if page.layout == "about-me" %}
+  <link rel="stylesheet" href="{{ '/assets/css/vendor-devicon.css' | relative_url }}" />
+  {% endif %}
+  {% if page.layout == "gallery" %}
+  <link rel="stylesheet" href="{{ '/assets/css/vendor-lightgallery.css' | relative_url }}" />
+  {% endif %}
   {% else %}
-  <link
-    rel="stylesheet"
-    href="{{ '/assets/bower_components/lightgallery/dist/css/lightgallery.min.css' | relative_url }}"
-  />
   <link
     rel="stylesheet"
     href="{{ '/assets/bower_components/bootstrap/dist/css/bootstrap.min.css' | relative_url }}"
@@ -98,6 +100,12 @@
     rel="stylesheet"
     href="{{ '/assets/bower_components/icono/dist/icono.min.css' | relative_url }}"
   />
+  {% if page.layout == "gallery" %}
+  <link
+    rel="stylesheet"
+    href="{{ '/assets/bower_components/lightgallery/dist/css/lightgallery.min.css' | relative_url }}"
+  />
+  {% endif %}
   {% endif %}
   <!-- Fonts-->
   <link
@@ -111,7 +119,7 @@
     rel="stylesheet"
   />
   <!-- Devicons for skill/tech logos -->
-  {% if jekyll.environment != "production" %}
+  {% if jekyll.environment != "production" and page.layout == "about-me" %}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
   {% endif %}
   <!-- Favicon -->

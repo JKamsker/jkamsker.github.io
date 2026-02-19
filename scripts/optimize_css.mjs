@@ -124,49 +124,10 @@ function purgeSafelist() {
       'tooltip',
       'popover',
     ],
-    greedy: [
-      /^lg-/,
-      /^lightgallery/,
-      /^navbar/,
-      /^modal/,
-      /^tooltip/,
-      /^popover/,
-      /^dropdown/,
-      /--active$/,
-      /--open$/,
-    ],
   };
 }
 
-async function buildVendorCss({ basePrefix }) {
-  const sources = [
-    {
-      kind: 'file',
-      id: 'lightgallery',
-      path: 'assets/bower_components/lightgallery/dist/css/lightgallery.min.css',
-    },
-    {
-      kind: 'file',
-      id: 'bootstrap',
-      path: 'assets/bower_components/bootstrap/dist/css/bootstrap.min.css',
-    },
-    {
-      kind: 'file',
-      id: 'font-awesome',
-      path: 'assets/bower_components/font-awesome/web-fonts-with-css/css/fontawesome-all.min.css',
-    },
-    {
-      kind: 'file',
-      id: 'icono',
-      path: 'assets/bower_components/icono/dist/icono.min.css',
-    },
-    {
-      kind: 'url',
-      id: 'devicon',
-      url: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css',
-    },
-  ];
-
+async function buildCssBundle({ basePrefix, sources }) {
   const chunks = [];
   for (const source of sources) {
     if (source.kind === 'file') {
@@ -252,16 +213,72 @@ async function main() {
   }
 
   const basePrefix = await detectBasePrefix(buildDir);
-  const vendorRaw = await buildVendorCss({ basePrefix });
-  const vendorOptimized = await purgeAndMinifyCss({
-    cssText: vendorRaw,
-    buildDir,
-    safelist: purgeSafelist(),
-  });
 
   const outDir = path.join(buildDir, 'assets', 'css');
   await fs.mkdir(outDir, { recursive: true });
-  await fs.writeFile(path.join(outDir, 'vendor.css'), vendorOptimized, 'utf8');
+  const baseSafelist = purgeSafelist();
+  const lightgallerySafelist = {
+    ...baseSafelist,
+    greedy: [/^lg-/, /^lightgallery/],
+  };
+
+  const bundles = [
+    {
+      outFile: 'vendor.css',
+      safelist: baseSafelist,
+      sources: [
+        {
+          kind: 'file',
+          id: 'bootstrap',
+          path: 'assets/bower_components/bootstrap/dist/css/bootstrap.min.css',
+        },
+        {
+          kind: 'file',
+          id: 'font-awesome',
+          path: 'assets/bower_components/font-awesome/web-fonts-with-css/css/fontawesome-all.min.css',
+        },
+        {
+          kind: 'file',
+          id: 'icono',
+          path: 'assets/bower_components/icono/dist/icono.min.css',
+        },
+      ],
+    },
+    {
+      outFile: 'vendor-devicon.css',
+      sources: [
+        {
+          kind: 'url',
+          id: 'devicon',
+          url: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css',
+        },
+      ],
+    },
+    {
+      outFile: 'vendor-lightgallery.css',
+      safelist: lightgallerySafelist,
+      sources: [
+        {
+          kind: 'file',
+          id: 'lightgallery',
+          path: 'assets/bower_components/lightgallery/dist/css/lightgallery.min.css',
+        },
+      ],
+    },
+  ];
+
+  const writtenFiles = [];
+  for (const bundle of bundles) {
+    const raw = await buildCssBundle({ basePrefix, sources: bundle.sources });
+    const optimized = await purgeAndMinifyCss({
+      cssText: raw,
+      buildDir,
+      safelist: bundle.safelist ?? baseSafelist,
+    });
+    const absOut = path.join(outDir, bundle.outFile);
+    await fs.writeFile(absOut, optimized, 'utf8');
+    writtenFiles.push(absOut);
+  }
 
   const mainCssPath = path.join(outDir, 'main.css');
   if (await fileExists(mainCssPath)) {
@@ -275,7 +292,7 @@ async function main() {
   }
 
   await removeBundledFiles({ buildDir });
-  process.stdout.write(`Wrote ${path.join(buildDir, 'assets', 'css', 'vendor.css')}\n`);
+  process.stdout.write(`Wrote ${writtenFiles.map((p) => path.relative(process.cwd(), p)).join(', ')}\n`);
 }
 
 main().catch((err) => {
