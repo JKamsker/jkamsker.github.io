@@ -119,6 +119,8 @@ jobs:
         run: |
           bundle install
           bundle exec jekyll build
+        env:
+          JEKYLL_ENV: production
 
       - name: deploy to firebase
         uses: w9jds/firebase-action@master
