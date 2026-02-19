@@ -51,7 +51,7 @@ Cowork runs inside a **dedicated Linux VM** - a full virtual machine running on 
 
 Think of Hyper-V as an apartment building. WSL2 is one tenant. Docker Desktop is another. Cowork moves in as a third - separate apartment, separate lease, separate plumbing. They share the building's foundation (the hypervisor), but nothing else. When Cowork's plumbing breaks, WSL2 keeps running fine. The reverse is also true - except for [one fun bug](https://github.com/anthropics/claude-code/issues/26216) where Cowork's virtual network *permanently breaks WSL2's internet* until you manually find and delete the offending network configuration using Windows' HNS diagnostic tools. Good neighbors.
 
-The whole thing is managed by a dedicated Windows service called `CoworkVMService` (`cowork-svc.exe`), which the Claude Desktop installer registers. The VM bundle lives at `%APPDATA%\Claude\vm_bundles\claudevm.bundle\` and contains a ~9.4 GB Linux root filesystem (`rootfs.vhdx` - VHDX is Hyper-V's virtual hard disk format), a Linux kernel (`vmlinuz`), an initial RAM disk for bootstrapping (`initrd`), and a persistent state disk (`sessiondata.vhdx`) that stores the VM's session data between restarts. That last file becomes very relevant in about three paragraphs. On macOS, Cowork uses Apple's Virtualization Framework instead of Hyper-V - same concept, different hypervisor, and roughly a month more maturity since it launched first.
+The whole thing is managed by a dedicated Windows service called `CoworkVMService` (`cowork-svc.exe`). The VM bundle lives inside Claude Desktop's app data — on my machine (Microsoft Store install) it was at `%LOCALAPPDATA%\Packages\Claude_*\LocalCache\Roaming\Claude\vm_bundles\claudevm.bundle\` (some non-Store installs use `%APPDATA%\Claude\vm_bundles\claudevm.bundle\`). It contains a ~9.4 GB Linux root filesystem (`rootfs.vhdx` - VHDX is Hyper-V's virtual hard disk format), a Linux kernel (`vmlinuz`), an initial RAM disk for bootstrapping (`initrd`), and a persistent state disk (`sessiondata.vhdx`) that stores the VM's session data between restarts. That last file becomes very relevant in about three paragraphs. On macOS, Cowork uses Apple's Virtualization Framework instead of Hyper-V - same concept, different hypervisor, and roughly a month more maturity since it launched first.
 
 The VM connects to the outside world through a virtual network adapter (`vEthernet (cowork-vm-nat)`) on its own private IP range (`172.16.0.0/24`). Two Windows services make this work: **HNS** (Host Networking Service) orchestrates the virtual network - think of it as the VM's network card and cabling. **WinNAT** (Windows Network Address Translation) then provides the actual internet routing - it translates the VM's private IP addresses into your host's real ones so traffic can flow in and out. Without HNS, the VM has no network. Without WinNAT, the VM has a network that goes nowhere.
 
@@ -122,9 +122,13 @@ Once you know what's actually broken, the fix is almost anticlimactic.
 ### Fix 1: Give the VM DNS
 
 ```powershell
-Set-DnsClientServerAddress -InterfaceAlias 'vEthernet (cowork-vm-nat)' `
-    -ServerAddresses @('1.1.1.1','8.8.8.8')
+$alias='vEthernet (cowork-vm-nat)'
+
+# In my case: my LAN resolver + Cloudflare as fallback
+Set-DnsClientServerAddress -InterfaceAlias $alias -ServerAddresses @('10.0.0.45','1.1.1.1')
 Clear-DnsClientCache
+
+Restart-Service CoworkVMService -Force
 ```
 
 You can verify it took:
@@ -132,7 +136,7 @@ You can verify it took:
 ```powershell
 Get-DnsClientServerAddress -InterfaceAlias 'vEthernet (cowork-vm-nat)'
 # Before: {}
-# After:  {1.1.1.1, 8.8.8.8}
+# After:  {10.0.0.45, 1.1.1.1}
 ```
 
 If you have specific DNS requirements (corporate resolvers, etc.), swap in whatever makes sense for your environment.
@@ -159,15 +163,18 @@ Two lines. That's it. The entire difference between "API unreachable" and a work
 The corrupted `sessiondata.vhdx` needs to go. But we're cautious, so we rename instead of delete:
 
 ```powershell
-Stop-Service CoworkVMService -Force
+$svc='CoworkVMService'
 
-# The path will be something like:
-# %APPDATA%\Claude\vm_bundles\claudevm.bundle\sessiondata.vhdx
+# Auto-detect bundle path (Store install uses a versioned package folder)
+$bundle = (Get-Item "$env:LOCALAPPDATA\Packages\Claude_*\LocalCache\Roaming\Claude\vm_bundles\claudevm.bundle" -ErrorAction SilentlyContinue).FullName
+if (-not $bundle) { $bundle = "$env:APPDATA\Claude\vm_bundles\claudevm.bundle" }
 
-# Rename the corrupted state (adjust path for your system)
-Rename-Item "sessiondata.vhdx" "sessiondata.vhdx.bak.$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+$session=Join-Path $bundle 'sessiondata.vhdx'
+$bak="$session.bak.$(Get-Date -Format 'yyyyMMdd-HHmmss')"
 
-Start-Service CoworkVMService
+Stop-Service $svc -Force
+Rename-Item -Path $session -NewName (Split-Path $bak -Leaf)
+Start-Service $svc
 ```
 
 In my case, Cowork created a fresh `sessiondata.vhdx` on next start. The old one sits there timestamped, waiting for the forensic investigation you'll never do. If your install never creates `sessiondata.vhdx` at all - or it's still broken after this - you're likely hitting a different setup bug and may need a full reinstall.
@@ -200,7 +207,7 @@ The diagnostic path requires you to already know that Cowork runs its own dedica
 
 And that's the core tension. Cowork is marketed at the people *least* equipped to debug it when it breaks. The fix is three PowerShell commands, but the path to discovering those three commands requires knowledge that Anthropic's target audience definitionally does not have.
 
-The relevant logs live in `%APPDATA%\Claude\logs\` - specifically `cowork_vm_node.log` for VM networking status and `main.log` for the CLI/sandbox errors. If you're hitting anything like what I described, start there.
+The relevant logs live in `%LOCALAPPDATA%\Packages\Claude_*\LocalCache\Roaming\Claude\logs\` (Microsoft Store install) or `%APPDATA%\Claude\logs\` (non-Store install) - specifically `cowork_vm_node.log` for VM networking status and `main.log` for the CLI/sandbox errors. If you're hitting anything like what I described, start there.
 
 ## FAQ (Partially Helpful, Fully Honest)
 
