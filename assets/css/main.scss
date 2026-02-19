@@ -1547,19 +1547,35 @@ html[data-theme="light"] {
 }
 
 .about-skill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
-  padding: 5px 14px;
+  padding: 6px 14px 6px 11px;
   border-radius: 6px;
   background: var(--post-elevated);
   border: 1px solid var(--post-border);
   color: var(--main-text-color);
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+
+  i {
+    font-size: 1rem;
+    width: 18px;
+    text-align: center;
+    opacity: 0.55;
+    transition: opacity 0.25s ease, color 0.25s ease;
+  }
 
   &:hover {
     border-color: var(--post-accent);
     color: var(--post-accent);
     background: var(--post-accent-soft);
+
+    i {
+      opacity: 1;
+      color: var(--post-accent);
+    }
   }
 }
 
