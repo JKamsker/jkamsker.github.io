@@ -9,23 +9,14 @@ else{
 
 /**
  * Page theme switching between *light* and *dark*
- * 
+ *
  * Initialize page theme and set event handlers
  */
 function modeSwitcher() {
 
-	switch ( localStorage.getItem('color-theme') ){
-		case 'dark':
-			$('.theme-toggle').removeAttr('checked');
-		break;
-		case 'light':
-			$('.theme-toggle').attr('checked','');
-		break;
-	}
-
-    /* 
+    /*
      * dark-light mode-switcher
-     * Change the icons inside the button based on previous settings
+     * Change the theme based on previous settings
      */
     $('.theme-toggle').off('click').on('click', function() {
 
@@ -37,6 +28,6 @@ function modeSwitcher() {
 			document.documentElement.setAttribute('data-theme', 'dark');
 			localStorage.setItem('color-theme', 'dark');
 		}
-        
+
     });
 }

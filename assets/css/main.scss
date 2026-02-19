@@ -93,14 +93,147 @@ html[data-theme="light"] {
 
 /* --- Navbar Refinements --- */
 
+#topNav {
+  padding: 0 32px !important;
+  height: 60px;
+  align-items: center;
+}
+
 .navbar-dark .navbar-brand {
   font-family: 'Bricolage Grotesque', sans-serif !important;
   font-weight: 700 !important;
+  font-size: 1.3rem !important;
   letter-spacing: -0.02em;
+  margin-right: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand__accent {
+  color: var(--post-accent) !important;
+}
+
+/* Center nav links */
+#topNav .navbar-collapse {
+  flex-grow: 1 !important;
+  justify-content: center !important;
+}
+
+#topNav .navbar-nav {
+  gap: 8px;
+}
+
+#topNav .navbar-nav .nav-link {
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 0.88rem !important;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 6px 18px !important;
+  border-radius: 6px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+#topNav .navbar-nav .nav-link:hover {
+  color: var(--post-accent) !important;
+  background: rgba(232, 155, 62, 0.08);
+}
+
+/* Right-side actions */
+.nav-actions {
+  gap: 4px;
+  align-items: center !important;
+  margin-left: 0 !important;
+}
+
+.nav-actions .toggle-search-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0 !important;
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-actions .toggle-search-button:hover {
+  background: rgba(232, 155, 62, 0.1);
+  color: var(--post-accent) !important;
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--post-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--nav-link-color);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.theme-toggle:hover {
+  background: rgba(232, 155, 62, 0.1);
+  border-color: var(--post-accent);
+  color: var(--post-accent);
+}
+
+/* Show moon in dark mode, sun in light mode */
+.theme-toggle__icon {
+  position: absolute;
+  transition: opacity 0.25s ease, transform 0.35s ease;
+}
+
+[data-theme="dark"] .theme-toggle__icon--dark {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+[data-theme="dark"] .theme-toggle__icon--light {
+  opacity: 0;
+  transform: rotate(-90deg);
+}
+[data-theme="light"] .theme-toggle__icon--dark {
+  opacity: 0;
+  transform: rotate(90deg);
+}
+[data-theme="light"] .theme-toggle__icon--light {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+/* Hide the old .switch checkbox if it somehow persists */
+input.switch.theme-toggle {
+  display: none !important;
 }
 
 #progress-bar {
   background: linear-gradient(to right, var(--post-accent, #E89B3E) var(--progress), transparent 0);
+}
+
+@media (max-width: 991px) {
+  #topNav {
+    padding: 0 16px !important;
+  }
+  #topNav .navbar-nav {
+    gap: 0;
+    padding: 12px 0;
+  }
+  #topNav .navbar-nav .nav-link {
+    padding: 10px 16px !important;
+  }
 }
 
 
