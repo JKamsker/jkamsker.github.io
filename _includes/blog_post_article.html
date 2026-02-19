@@ -70,3 +70,28 @@
   </div>
   {% endif %}
 </article>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.post-content div.highlighter-rouge').forEach(function (block) {
+    var btn = document.createElement('button');
+    btn.className = 'code-copy-btn';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.innerHTML = '<i class="fa fa-clipboard"></i>';
+    btn.addEventListener('click', function () {
+      var code = block.querySelector('code');
+      if (!code) return;
+      navigator.clipboard.writeText(code.textContent).then(function () {
+        btn.innerHTML = '<i class="fa fa-check"></i>';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.innerHTML = '<i class="fa fa-clipboard"></i>';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+    block.style.position = 'relative';
+    block.appendChild(btn);
+  });
+});
+</script>
