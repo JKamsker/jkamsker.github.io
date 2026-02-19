@@ -1,6 +1,12 @@
-<footer>
-  <p>
-    © {{ "now" | date: "%Y" }} {{ site.title }} ·
-    <a href="{{ "/feed.xml" | prepend: site.baseurl }}">RSS</a>
-  </p>
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <span class="site-footer__name">{{ site.title }}</span>
+    <div class="site-footer__links">
+      <a href="{{ "/feed.xml" | prepend: site.baseurl }}">RSS</a>
+      {% if site.github_username %}
+      <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener">GitHub</a>
+      {% endif %}
+    </div>
+    <p class="site-footer__copy">&copy; {{ "now" | date: "%Y" }} {{ site.title }}</p>
+  </div>
 </footer>

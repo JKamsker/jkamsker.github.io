@@ -1,30 +1,26 @@
-<div class="card">
-    <div class="card-header">
-        About {{author.name}}
+<div class="post-author">
+  <div class="post-author__avatar">
+    {% if author.avatar_url %}
+    <img src="{{ '/assets/img/authors/' | append: author.avatar_url | relative_url }}" alt="{{author.name}}" />
+    {% else %}
+    <img src="{{ '/assets/img/authors/' | append: author.avatar | relative_url }}" alt="{{author.name}}" />
+    {% endif %}
+  </div>
+  <div class="post-author__info">
+    <span class="post-author__written-by">Written by</span>
+    <h3 class="post-author__name">{{author.name}}</h3>
+    <p class="post-author__bio">{{author.bio}}</p>
+    <div class="post-author__links">
+      {% for network in author.social %}
+      <a class="post-author__social" href="{{ network.url }}" target="_blank" rel="noopener">
+        <i class="fab fa-{{ network.title }} fa-fw"></i>
+      </a>
+      {% endfor %}
+      {% if author.site and author.site != "" %}
+      <a class="post-author__social" href="{{author.site}}" target="_blank" rel="noopener">
+        <i class="fa fa-globe"></i>
+      </a>
+      {% endif %}
     </div>
-    <div class="card-body">
-        <div class="row">
-                <div class="col-md-4">
-                        {% if author.avatar_url %}
-                        <img class="author-profile-img" src="{{ '/assets/img/authors/' | append: author.avatar_url | relative_url }}" alt="{{author.name}}" />
-                      {% else %}
-                        <img class="author-profile-img" src="{{ '/assets/img/authors/' | append: author.avatar | relative_url }}" alt="{{author.name}}" />
-                      {% endif %}
-                </div>
-                <div class="col-md-6">
-                        <p class="author_bio">{{author.bio}}</p>
-                        {% if author.email and author.email != "" %}
-                        <p>Email: <a href="mailto:{{author.email}}">{{author.email}}</a></p>
-                        {% endif %}
-                        {% if author.site and author.site != "" %}
-                        <p>Website: <a href="{{author.site}}" target="_blank" rel="noopener">{{author.site}}</a></p>
-                        {% endif %}
-                        <p class="profile-links">
-                            {% for network in author.social %}
-                                <a class="social-link" href="{{ network.url }}" target="_blank"><i class="fab fa-{{ network.title }} fa-fw"></i></a>
-                            {% endfor %}
-                        </p>
-                </div>
-        </div>
-    </div>
+  </div>
 </div>

@@ -2,32 +2,25 @@
 layout: default
 ---
 
-<div class="row justify-content-center" id="blog-post-container">
-  <div class="col-lg-10">
-    {%- include blog_post_article.html -%}
-  </div>
+<div id="blog-post-container">
+  {%- include blog_post_article.html -%}
 </div>
-<div class="row">
-  <div class="col-md-4">
-    <div class="card">
-      <div class="card-header">About {{site.author}}</div>
-      <div class="card-body">
-        <p class="author_bio">{{ site.author_bio }}</p>
-      </div>
+
+<aside class="post-bottom-section">
+  <div class="post-bottom-grid">
+    <div class="post-bottom-card">
+      <h4 class="post-bottom-card__title">About {{site.author}}</h4>
+      <p>{{ site.author_bio }}</p>
     </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card">
-      <div class="card-header">Categories</div>
-      <div class="card-body text-dark">
+    <div class="post-bottom-card">
+      <h4 class="post-bottom-card__title">Categories</h4>
+      <div>
         {%- include blog_categories.html -%}
       </div>
     </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card">
-      <div class="card-header">Useful Links</div>
-      <div class="card-body text-dark">
+    <div class="post-bottom-card">
+      <h4 class="post-bottom-card__title">Explore</h4>
+      <div>
         {% for i in site.urls %}
         <li>
           <a href="{{ i.url | relative_url }}">{{ i.text }}</a>
@@ -36,5 +29,4 @@ layout: default
       </div>
     </div>
   </div>
-</div>
-
+</aside>
