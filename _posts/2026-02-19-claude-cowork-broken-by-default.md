@@ -47,13 +47,17 @@ And here's the part that really bothers me: Anthropic is positioning Cowork squa
 
 Here's the thing the "API unreachable" error doesn't tell you: Cowork doesn't run on your machine. Not really.
 
-Cowork runs inside a **dedicated Linux VM** - a full Hyper-V virtual machine managed through Microsoft's low-level Host Compute Service (HCS) API. If you've used WSL2 or Docker Desktop on Windows, you've touched the same hypervisor layer. But here's what tripped me up: **Cowork does *not* share WSL2's VM.** It's not a distro running inside the WSL2 lightweight utility VM. It's not piggybacking on Docker's backend either. It boots its own completely independent virtual machine, with its own kernel, its own root filesystem, and its own networking stack.
+Cowork runs inside a **dedicated Linux VM** - a full virtual machine running on Hyper-V (Windows' built-in hypervisor, the same technology that powers WSL2 and Docker Desktop). Under the hood, Cowork talks to Microsoft's Host Compute Service (HCS) - a low-level API for creating and managing VMs that sits beneath the friendlier tools like Hyper-V Manager. But here's what tripped me up: **Cowork does *not* share WSL2's VM.** It's not a distro running inside the WSL2 lightweight utility VM. It's not piggybacking on Docker's backend either. It boots its own completely independent virtual machine, with its own kernel, its own root filesystem, and its own networking stack.
 
-Think of Hyper-V as an apartment building. WSL2 is one tenant. Docker Desktop is another. Cowork moves in as a third - separate apartment, separate lease, separate plumbing. They share the building's foundation (the hypervisor), but nothing else. When Cowork's plumbing breaks, WSL2 keeps running fine. The reverse is also true - except for [one fun bug](https://github.com/anthropics/claude-code/issues/26216) where Cowork's virtual network *permanently breaks WSL2's internet* until you manually delete the HNS network entry. Good neighbors.
+Think of Hyper-V as an apartment building. WSL2 is one tenant. Docker Desktop is another. Cowork moves in as a third - separate apartment, separate lease, separate plumbing. They share the building's foundation (the hypervisor), but nothing else. When Cowork's plumbing breaks, WSL2 keeps running fine. The reverse is also true - except for [one fun bug](https://github.com/anthropics/claude-code/issues/26216) where Cowork's virtual network *permanently breaks WSL2's internet* until you manually find and delete the offending network configuration using Windows' HNS diagnostic tools. Good neighbors.
 
-The whole thing is managed by a dedicated Windows service called `CoworkVMService` (`cowork-svc.exe`), which the Claude Desktop installer registers. The VM bundle lives at `%APPDATA%\Claude\vm_bundles\claudevm.bundle\` and contains a ~9.4 GB Linux root filesystem (`rootfs.vhdx`), a Linux kernel (`vmlinuz`), an initrd, and a persistent state disk (`sessiondata.vhdx`) - the last of which becomes very relevant in about three paragraphs. On macOS, Cowork uses Apple's Virtualization Framework instead of Hyper-V - same concept, different hypervisor, and roughly a month more maturity since it launched first.
+The whole thing is managed by a dedicated Windows service called `CoworkVMService` (`cowork-svc.exe`), which the Claude Desktop installer registers. The VM bundle lives at `%APPDATA%\Claude\vm_bundles\claudevm.bundle\` and contains a ~9.4 GB Linux root filesystem (`rootfs.vhdx` - VHDX is Hyper-V's virtual hard disk format), a Linux kernel (`vmlinuz`), an initial RAM disk for bootstrapping (`initrd`), and a persistent state disk (`sessiondata.vhdx`) that stores the VM's session data between restarts. That last file becomes very relevant in about three paragraphs. On macOS, Cowork uses Apple's Virtualization Framework instead of Hyper-V - same concept, different hypervisor, and roughly a month more maturity since it launched first.
 
-The VM connects to the outside world through a virtual network adapter (`vEthernet (cowork-vm-nat)`) on subnet `172.16.0.0/24`, with HNS (Host Networking Service) managing the virtual switch and WinNAT providing outbound NAT. Host folders get shared into the VM via VirtioFS, mounted at `/mnt/.virtiofs-root/shared/`. When either the networking or the filesystem sharing breaks, Cowork doesn't degrade gracefully - it faceplants into error messages that point everywhere except the actual problem.
+The VM connects to the outside world through a virtual network adapter (`vEthernet (cowork-vm-nat)`) on its own private IP range (`172.16.0.0/24`). Two Windows services make this work: **HNS** (Host Networking Service) creates and manages the virtual network switch - think of it as the VM's network card and cabling. **WinNAT** (Windows Network Address Translation) then provides the actual internet routing - it translates the VM's private IP addresses into your host's real ones so traffic can flow in and out. Without HNS, the VM has no network. Without WinNAT, the VM has a network that goes nowhere.
+
+Host folders get shared into the VM via **VirtioFS**, a high-performance file sharing protocol designed for virtual machines (similar to how Docker mounts host directories into containers). Your workspace folder appears inside the VM at `/mnt/.virtiofs-root/shared/`.
+
+When either the networking or the filesystem sharing breaks, Cowork doesn't degrade gracefully - it faceplants into error messages that point everywhere except the actual problem.
 
 ## The Diagnosis: Three Layers of Broken
 
@@ -75,7 +79,7 @@ Meanwhile, the host was merrily resolving DNS on its own adapters, completely un
 
 ### Layer 2: WinNAT Was Just... Gone
 
-This is the one that really got me. The virtual network *existed* - HNS showed it, subnet `172.16.0.0/24`, gateway `172.16.0.1`, all looking perfectly normal:
+This is the one that really got me. The virtual network *existed* - HNS (the service that manages Cowork's virtual network, remember) showed it, subnet `172.16.0.0/24`, gateway `172.16.0.1`, all looking perfectly normal:
 
 ```powershell
 Get-NetNat
@@ -97,11 +101,11 @@ And later, having given up on optimism:
 API reachability: UNREACHABLE
 ```
 
-This is a [known issue](https://github.com/anthropics/claude-code/issues/24945), by the way. Multiple users have reported it. The installer creates the HNS network but doesn't reliably create the corresponding WinNAT rule. And if you're running VPN software, it gets worse - [VPNs are fundamentally incompatible](https://github.com/anthropics/claude-code/issues/25513) with Cowork's NAT setup because VPN split-tunnel rules don't apply to NAT'd VM traffic. The VPN doesn't know Cowork's VM exists. It can't route for a tenant it's never met.
+This is a [known issue](https://github.com/anthropics/claude-code/issues/24945), by the way. Multiple users have reported it. The installer creates the virtual network via HNS but doesn't reliably create the corresponding WinNAT rule that gives that network internet access. And if you're running VPN software, it gets worse - [VPNs are fundamentally incompatible](https://github.com/anthropics/claude-code/issues/25513) with Cowork's NAT setup because VPN split-tunnel rules don't apply to NAT'd VM traffic. The VPN doesn't know Cowork's VM exists. It can't route for a tenant it's never met.
 
 ### Layer 3: The VM's Virtual Disk Was Corrupted
 
-Even if networking were perfect, Cowork still wouldn't have started. Remember `sessiondata.vhdx`? The persistent state disk? It was in an inconsistent state, which meant the VirtioFS host share failed to mount.
+Even if networking were perfect, Cowork still wouldn't have started. Remember `sessiondata.vhdx`? The VM's persistent state disk? It was in an inconsistent state, which meant the VirtioFS host share - the file sharing bridge between your Windows folders and the VM - failed to mount.
 
 The sandbox helper process tried to set up the environment, discovered the mount point was broken, and printed an error to stdout. The Cowork CLI, expecting a stream of JSON, got plaintext instead. Parser meets unexpected input. Parser loses.
 
@@ -208,7 +212,7 @@ Probably. WinNAT has the persistence of a New Year's resolution. Check `Get-NetN
 Yes. They all use Hyper-V under the hood, but each runs its own isolated instance. Docker Desktop *can* optionally use WSL2's VM as a backend, but Cowork never does. Three tenants, one building, zero coordination on plumbing.
 
 **Does Cowork break WSL2?**
-It can. [Issue #26216](https://github.com/anthropics/claude-code/issues/26216) documents Cowork's HNS network permanently breaking WSL2's internet. The fix is deleting the `cowork-vm-nat` HNS network, which you'll need to redo every time Claude Desktop recreates it.
+It can. [Issue #26216](https://github.com/anthropics/claude-code/issues/26216) documents Cowork's virtual network (managed by HNS) permanently breaking WSL2's internet. The fix is deleting the `cowork-vm-nat` network entry via `Get-HnsNetwork | Where-Object { $_.Name -eq "cowork-vm-nat" } | Remove-HnsNetwork`, which you'll need to redo every time Claude Desktop recreates it.
 
 **Is this a Cowork bug or a Windows bug?**
 Both. The error messages are Cowork's fault - surfacing "WinNAT missing" instead of "API unreachable" would save hours. But Windows silently dropping NAT configurations isn't Cowork's doing. It's Cowork trusting Windows to hold its drink. Windows dropped it.
