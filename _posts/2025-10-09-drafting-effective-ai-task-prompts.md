@@ -5,7 +5,7 @@ summary: A repeatable framework for briefing ChatGPT or GitHub Copilot X before 
 author: jkamsker
 date: '2025-10-09 12:00:00 +0000'
 category: guides
-thumbnail: /assets/img/posts/code.jpg
+thumbnail: /assets/img/posts/ai-task-prompts.webp
 keywords: ai pair programming, chatgpt prompts, codex workflow, software planning, productivity
 tags: [ai, workflow, productivity]
 permalink: /blog/drafting-effective-ai-task-prompts/

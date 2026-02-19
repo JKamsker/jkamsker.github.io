@@ -5,7 +5,7 @@ summary: Two strategies for supporting multiple .NET target frameworks - compile
 author: jkamsker
 date: '2025-10-05 12:00:00 +0000'
 category: guides
-thumbnail: /assets/img/posts/code.jpg
+thumbnail: /assets/img/posts/polyfill-csharp.webp
 keywords: csharp, dotnet, multi-targeting, polyfill, netstandard, net8, partial-classes
 tags: [csharp, dotnet]
 permalink: /blog/polyfill-csharp/

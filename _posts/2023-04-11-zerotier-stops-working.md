@@ -5,7 +5,7 @@ summary: A quick workaround for ZeroTier going offline on a Raspberry Pi - a cro
 author: jkamsker
 date: '2023-04-11 12:00:00 +0000'
 category: guides
-thumbnail: /assets/img/posts/code.jpg
+thumbnail: /assets/img/posts/zerotier-network.webp
 keywords: zerotier, vpn, raspberry-pi, networking, cron, workaround, linux
 tags: [linux, networking, devops]
 permalink: /blog/zerotier-stops-working/

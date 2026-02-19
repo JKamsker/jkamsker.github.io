@@ -5,7 +5,7 @@ summary: How to sync shared Google Calendars with Thunderbird using a CalDAV wor
 author: jkamsker
 date: '2025-09-08 12:00:00 +0000'
 category: guides
-thumbnail: /assets/img/posts/code.jpg
+thumbnail: /assets/img/posts/thunderbird-calendar.webp
 keywords: thunderbird, google-calendar, caldav, ical, shared-calendar, sync, workaround
 tags: [productivity, workaround]
 permalink: /blog/taming-google-calendar-thunderbird/

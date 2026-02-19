@@ -5,7 +5,7 @@ summary: How to evaluate, compare, and merge Codex-generated branches without lo
 author: jkamsker
 date: '2025-10-09 12:00:00 +0000'
 category: guides
-thumbnail: /assets/img/posts/code.jpg
+thumbnail: /assets/img/posts/ai-distilling-funnel.webp
 keywords: ai code review, codex workflow, pull request evaluation, software process, productivity
 tags: [ai, workflow, git]
 permalink: /blog/distilling-ai-generated-iterations/
