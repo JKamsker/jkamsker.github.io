@@ -1,4 +1,4 @@
-<article class="post-article" itemscope itemtype="http://schema.org/BlogPosting">
+<article class="post-article" itemscope itemtype="https://schema.org/BlogPosting">
   <header class="post-header">
     <div class="post-header__categories">
       {% if post %} {% assign categories = post.categories %} {% else %} {%
@@ -12,12 +12,12 @@
     <p class="post-header__summary">{{ page.summary }}</p>
     <div class="post-header__byline">
       {% if page.author %}
-      <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <span itemprop="author" itemscope itemtype="https://schema.org/Person">
         <a href="{{ '/blog/authors/' | append: page.author | relative_url }}" class="post-header__author" itemprop="name">{{ page.author }}</a>
       </span>
       <span class="post-header__dot">&middot;</span>
       {% endif %}
-      <time datetime="{{ page.date }}" itemprop="datePublished" class="post-header__date">{{ page.date | date: "%b %-d, %Y" }}</time>
+      <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished" class="post-header__date">{{ page.date | date: "%b %-d, %Y" }}</time>
       <span class="post-header__dot">&middot;</span>
       <span class="post-header__reading-time">{% assign words = content | number_of_words %}{{ words | divided_by: 200 | plus: 1 }} min read</span>
     </div>
@@ -25,7 +25,7 @@
 
   {% if page.thumbnail %}
   <div class="post-thumbnail">
-    <img src="{{ page.thumbnail | relative_url }}" alt="{{ page.title }}" />
+    <img src="{{ page.thumbnail | relative_url }}" alt="{{ page.title }}" width="1200" height="630" itemprop="image" />
   </div>
   {% endif %}
 

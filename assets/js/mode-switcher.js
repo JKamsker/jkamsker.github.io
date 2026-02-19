@@ -1,9 +1,7 @@
-$(document).ready(()=> modeSwitcher() )
-
-if ( !localStorage.getItem('color-theme') ){
+// Apply saved theme immediately to prevent flash of wrong theme
+if (!localStorage.getItem('color-theme')) {
 	document.documentElement.setAttribute('data-theme', 'dark');
-}
-else{
+} else {
 	document.documentElement.setAttribute('data-theme', localStorage.getItem('color-theme'));
 }
 
@@ -12,22 +10,17 @@ else{
  *
  * Initialize page theme and set event handlers
  */
-function modeSwitcher() {
-
-    /*
-     * dark-light mode-switcher
-     * Change the theme based on previous settings
-     */
-    $('.theme-toggle').off('click').on('click', function() {
-
-        // if exists and set via local storage previously
-		if ($(document.documentElement).attr('data-theme') === "dark" ) {
-			document.documentElement.setAttribute('data-theme', 'light');
-			localStorage.setItem('color-theme', 'light');
-		} else {
-			document.documentElement.setAttribute('data-theme', 'dark');
-			localStorage.setItem('color-theme', 'dark');
-		}
-
-    });
-}
+document.addEventListener('DOMContentLoaded', function () {
+	var toggles = document.querySelectorAll('.theme-toggle');
+	toggles.forEach(function (toggle) {
+		toggle.addEventListener('click', function () {
+			if (document.documentElement.getAttribute('data-theme') === 'dark') {
+				document.documentElement.setAttribute('data-theme', 'light');
+				localStorage.setItem('color-theme', 'light');
+			} else {
+				document.documentElement.setAttribute('data-theme', 'dark');
+				localStorage.setItem('color-theme', 'dark');
+			}
+		});
+	});
+});

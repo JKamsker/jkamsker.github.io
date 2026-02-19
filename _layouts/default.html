@@ -3,7 +3,7 @@ layout: compress
 ---
 
 <!DOCTYPE html>
-<html lang="{{ page.lang | default: site.lang | default: " en " }}">
+<html lang="{{ page.lang | default: site.lang | default: 'en' }}">
 {%- include head.html -%}
 <body>
         {%- include header.html -%}
@@ -21,16 +21,5 @@ layout: compress
             nanobar.go( 76 );
             nanobar.go(100);
         </script>
-   <script>
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", user => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
-          });
-        }
-      });
-    }
-  </script>
   </body>
 </html>

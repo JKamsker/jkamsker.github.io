@@ -107,15 +107,11 @@
   />
   {% endif %}
   {% endif %}
-  <!-- Fonts-->
-  <link
-    href="https://fonts.googleapis.com/css?family=Quicksand&display=swap"
-    rel="stylesheet"
-  />
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;600&display=swap"
     rel="stylesheet"
   />
   <!-- Devicons for skill/tech logos -->
@@ -131,47 +127,53 @@
   />
   <script>
       var base_url = '{{ site.baseurl | default: "" }}' ;
-   </script>
+  </script>
 
-  <!-- Jquery -->
+  <!-- Mode switcher must run early to prevent flash of wrong theme -->
+  <script src="{{ '/assets/js/mode-switcher.js' | relative_url }}"></script>
+
+  <!-- Deferred scripts -->
   <script
+    defer
     src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh"
     crossorigin="anonymous"
   ></script>
-  <!-- <script src="{{ '/assets/bower_components/jquery/dist/jquery.min.js' | relative_url }}"></script> -->
-  <script src="{{ '/assets/js/mode-switcher.js' | relative_url }}"></script>
-  <script src="{{ '/assets/bower_components/jquery.easing/jquery.easing.min.js' | relative_url }}"></script>
-  <script src="{{ '/assets/bower_components/bootstrap/dist/js/bootstrap.bundle.min.js' | relative_url }}"></script>
-  <script src="{{ '/assets/bower_components/jquery-mousewheel/jquery.mousewheel.min.js' | relative_url }}"></script>
-  <script src="{{ '/assets/bower_components/ghosthunter/dist/jquery.ghostHunter.min.js' | relative_url }}"></script>
-  <script src="{{ '/assets/bower_components/lightgallery/dist/js/lightgallery-all.min.js' | relative_url }}"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/picturefill/3.0.2/picturefill.min.js"></script>
-  <script src="{{ '/assets/bower_components/imagesloaded/imagesloaded.pkgd.min.js' | relative_url }}"></script>
-  <script src="{{ '/assets/bower_components/nanobar/nanobar.min.js' | relative_url }}"></script>
-  <script src="{{ '/assets/bower_components/typewrite/dist/typewrite.min.js' | relative_url }}"></script>
-  <script src="{{ '/assets/js/search.js' | relative_url }}"></script>
-  <script src="{{ '/assets/js/on-scroll-progress.js' | relative_url }}"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script defer src="{{ '/assets/bower_components/jquery.easing/jquery.easing.min.js' | relative_url }}"></script>
+  <script defer src="{{ '/assets/bower_components/bootstrap/dist/js/bootstrap.bundle.min.js' | relative_url }}"></script>
+  <script defer src="{{ '/assets/bower_components/ghosthunter/dist/jquery.ghostHunter.min.js' | relative_url }}"></script>
+  {% if page.layout == "gallery" %}
+  <script defer src="{{ '/assets/bower_components/lightgallery/dist/js/lightgallery-all.min.js' | relative_url }}"></script>
+  <script defer src="{{ '/assets/bower_components/imagesloaded/imagesloaded.pkgd.min.js' | relative_url }}"></script>
+  {% endif %}
+  <script defer src="{{ '/assets/bower_components/nanobar/nanobar.min.js' | relative_url }}"></script>
+  {% if page.layout == "home" %}
+  <script defer src="{{ '/assets/bower_components/typewrite/dist/typewrite.min.js' | relative_url }}"></script>
+  {% endif %}
+  <script defer src="{{ '/assets/js/search.js' | relative_url }}"></script>
+  <script defer src="{{ '/assets/js/on-scroll-progress.js' | relative_url }}"></script>
 
- <!-- for Mathjax support -->
+  <!-- for Mathjax support -->
   {% if page.usemathjax %}
-   <script type="text/x-mathjax-config">
+  <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
       TeX: { equationNumbers: { autoNumber: "AMS" } }
       });
-   </script>
-   <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  </script>
+  <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   {% endif %}
 
   <!-- Github Button -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-    integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-    crossorigin="anonymous"
-  ></script>
 
+  <!-- LCP image preload -->
+  {% if page.layout == "home" %}
+  <link rel="preload" as="image" href="{{ '/assets/img/' | append: site.author_logo | relative_url }}" type="image/webp" />
+  {% elsif page.thumbnail %}
+  <link rel="preload" as="image" href="{{ page.thumbnail | relative_url }}" type="image/webp" />
+  {% endif %}
+
+  <!-- Structured Data -->
+  {%- include schema.html -%}
 
 </head>

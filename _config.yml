@@ -3,7 +3,7 @@ subtitle: .NET Developer & Open Source Enthusiast
 description: >-
   Personal blog and portfolio of Jonas Kamsker - .NET developer and open-source enthusiast based in Linz, Austria.
 
-url: "https://jkamsker.github.io" # the base hostname & protocol for your site, e.g. https://example.github.io
+url: "https://blog.kamsker.at" # the base hostname & protocol for your site
 baseurl: "" # the subpath of your site, e.g. /blog
 
 # Navigation
@@ -11,9 +11,9 @@ urls:
     - text: Home
       url: /
     - text: Blog
-      url: /blog
+      url: /blog/
     - text: About
-      url: /about
+      url: /about/
 
 
 # Edit Author details (For multi authors check _data/authors.yml)
@@ -23,7 +23,7 @@ author: Jonas Kamsker
 author_bio: "Full-stack developer with a strong focus on backend, experienced in C#/.NET and various frontend technologies. Passionate about software architecture, clean code, open source, and generative AI. Creator of Audible Tools, a privacy-focused browser-based AAX converter with 500+ GitHub stars. Active open-source contributor to projects like spectre.console, graphql-dotnet, NSwag, and FFMpegCore. Volunteer mentor at CoderDojo Linz, teaching kids programming, Docker, and Discord bot development."
 author_email: ""
 author_location: Linz, Austria
-author_website_url: "http://jonas.kamsker.at/"
+author_website_url: "https://jonas.kamsker.at/"
 typewrite-text: ".NET developer, open-source enthusiast, and tool builder based in Linz, Austria"
 hero_cover_img: sample_cover.jpg # Image should be in /assets/img
 
@@ -178,6 +178,12 @@ defaults:
       path: 'assets'
     values:
       sitemap: false
+  -
+    scope:
+      path: 'admin'
+    values:
+      sitemap: false
+      noindex: true
 
 # Build settings
 plugins:

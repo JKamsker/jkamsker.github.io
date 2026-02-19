@@ -4,7 +4,7 @@
       <span class="recent-posts__label">Latest</span>
       <h2 class="recent-posts__title">Recent Articles</h2>
     </div>
-    <a class="recent-posts__view-all" href="{{ '/blog' | relative_url }}">
+    <a class="recent-posts__view-all" href="{{ '/blog/' | relative_url }}">
       View All <i class="fa fa-arrow-right"></i>
     </a>
   </div>
@@ -14,7 +14,7 @@
     <a href="{{ post.url | relative_url }}" class="recent-posts__card">
       {% if post.thumbnail %}
       <div class="recent-posts__card-thumb">
-        <img src="{{ post.thumbnail | relative_url }}" alt="{{ post.title }}" />
+        <img src="{{ post.thumbnail | relative_url }}" alt="{{ post.title }}" width="600" height="315" loading="lazy" />
       </div>
       {% endif %}
       <div class="recent-posts__card-body">
