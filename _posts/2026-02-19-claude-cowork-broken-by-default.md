@@ -11,7 +11,7 @@ tags: [windows, debugging, devops]
 permalink: /blog/cowork-windows-broken/
 ---
 
-> **TL;DR:** Claude Cowork is broken out of the box on Windows. This is my journey figuring out why — and how to fix it.
+> **TL;DR:** Claude Cowork is broken by default on Windows. This is my journey figuring out why — and how to fix it.
 
 ## The Promise
 
