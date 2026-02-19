@@ -1,0 +1,48 @@
+---
+layout: default
+---
+{% assign cat_key = page.title | downcase %}
+{% assign cat_posts = site.categories[cat_key] %}
+
+<div class="blog-page">
+  <div class="blog-page__header">
+    <div>
+      <span class="blog-page__label">Category</span>
+      <h1 class="blog-page__title">{{ page.title }}</h1>
+    </div>
+    <a class="blog-page__back" href="{{ '/blog' | relative_url }}">
+      <i class="fa fa-arrow-left"></i> All Articles
+    </a>
+  </div>
+
+  <div class="blog-page__list">
+    {% for post in cat_posts %}
+    <a href="{{ post.url | prepend: site.baseurl }}" class="blog-card" style="animation-delay: {{ forloop.index0 | times: 0.06 }}s">
+      {% if post.thumbnail %}
+      <div class="blog-card__thumb">
+        <img src="{{ post.thumbnail | relative_url }}" alt="{{ post.title }}" loading="lazy" />
+      </div>
+      {% endif %}
+      <div class="blog-card__body">
+        <div class="blog-card__meta">
+          <time class="blog-card__date" datetime="{{ post.date }}">{{ post.date | date: "%b %-d, %Y" }}</time>
+        </div>
+        <h2 class="blog-card__title">{{ post.title }}</h2>
+        {% if post.summary %}
+        <p class="blog-card__summary">{{ post.summary | truncate: 160 }}</p>
+        {% endif %}
+        <div class="blog-card__footer">
+          {% if post.tags.size > 0 %}
+          <div class="blog-card__tags">
+            {% for tag in post.tags limit:3 %}
+            <span class="blog-card__tag">#{{ tag }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <span class="blog-card__read-more">Read <i class="fa fa-arrow-right"></i></span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
