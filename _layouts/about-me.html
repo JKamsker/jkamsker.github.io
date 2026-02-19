@@ -1,198 +1,166 @@
 ---
 layout: default
 ---
-<div class="col-lg-12">
-<div class="row">
-  <div class="col-lg-4">
-    <div class="card" id="profile-card">
-      <a href="/">
-        <img src="{{ '/assets/img/' | append: site.author_logo | relative_url }}" class="profile-img" />
-      </a>
-      <h1 class="profile-name">{{ site.title }}</h1>
-      <p class="profile-bio">{{ site.subtitle }}</p>
-      {% if site.github_username %} {%- include github_follow_button.html -%} {%
-      endif %}
 
-      <p class="profile-links">
-        {% if site.twitter_username %}
-        <a
-          class="social-link"
-          href="http://twitter.com/{{ site.twitter_username }}"
-        >
-          <i class="fab fa-twitter"></i>
-        </a>
-        {% endif %} {% if site.facebook_username %}
-        <a
-          class="social-link"
-          href="http://facebook.com/{{ site.facebook_username }}"
-        >
-          <i class="fab fa-facebook-f"></i>
-        </a>
-        {% endif %} {% if site.instagram_username %}
-        <a
-          class="social-link"
-          href="http://instagram.com/{{ site.instagram_username }}"
-        >
-          <i class="fab fa-instagram"></i>
-        </a>
-        {% endif %} {% if site.medium_username %}
-        <a
-          class="social-link"
-          href="http://medium.com/@{{ site.medium_username }}"
-        >
-          <i class="fab fa-medium-m"></i>
-        </a>
-        {% endif %} {% if site.github_username %}
-        <a
-          class="social-link"
-          href="http://github.com/{{ site.github_username }}"
-        >
-          <i class="fab fa-github"></i>
-        </a>
-        {% endif %} {% if site.behance_username %}
-        <a
-          class="social-link"
-          href="http://behance.net/{{ site.behance_username }}"
-        >
-          <i class="fab fa-behance"></i>
-        </a>
-        {% endif %} {% if site.linkedin_username %}
-        <a
-          class="social-link"
-          href="http://linkedin.com/in/{{ site.linkedin_username }}"
-        >
-          <i class="fab fa-linkedin-in"></i>
-        </a>
-        {% endif %} {% if site.telegram_username %}
-        <a class="social-link" href="http://t.me/{{ site.telegram_username }}">
-          <i class="fab fa-telegram-plane"></i>
-        </a>
-        {% endif %} {% if site.dribbble_username %}
-        <a
-          class="social-link"
-          href="https://dribbble.com/{{ site.dribbble_username }}"
-        >
-          <i class="fab fa-dribbble"></i>
-        </a>
-        {% endif %} {% if site.flickr_username %}
-        <a
-          class="social-link"
-          href="https://www.flickr.com/photos/{{ site.flickr_username }}"
-        >
-          <i class="fab fa-flickr"></i>
-        </a>
-        {% endif %}
-      </p>
-
+<div class="about-page">
+  <!-- Hero / Profile Header -->
+  <header class="about-hero">
+    <div class="about-hero__avatar-ring">
+      <img src="{{ '/assets/img/' | append: site.author_logo | relative_url }}" alt="{{ site.title }}" />
+    </div>
+    <h1 class="about-hero__name">{{ site.title }}</h1>
+    <p class="about-hero__subtitle">{{ site.subtitle }}</p>
+    <div class="about-hero__meta">
       {% if site.author_location %}
-      <h6><a href="https://www.google.com/maps/search/?api=1&query={{ site.author_location }}" class="social-link"><i class="fas fa-map-marker-alt"></i> {{ site.author_location }}</a></h6>
-      {% endif %} {% if site.author_email %}
-      <h6><a href="mailto:{{ site.author_email }}"><i class="fas fa-envelope" class="social-link"></i> {{ site.author_email }}</a></h6>
-      {% endif %} {% if site.author_website_url %}
-      <h6><a href="{{ site.author_website_url }}"><i class="fas fa-link" class="social-link"></i> {{ site.author_website_url }}</a></h6>
+      <span class="about-hero__meta-item">
+        <i class="fas fa-map-marker-alt"></i> {{ site.author_location }}
+      </span>
+      {% endif %}
+      {% if site.author_website_url %}
+      <span class="about-hero__meta-item">
+        <a href="{{ site.author_website_url }}"><i class="fas fa-link"></i> {{ site.author_website_url | remove: 'http://' | remove: 'https://' | remove_first: '/' }}</a>
+      </span>
       {% endif %}
     </div>
-
-    <div class="card">
-      <h1>Skills</h1>
-
-      {%- include author_skills.html -%}
+    <div class="about-hero__social">
+      {% if site.github_username %}
+      <a class="about-hero__social-link" href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener" aria-label="GitHub">
+        <i class="fab fa-github"></i>
+      </a>
+      {% endif %}
+      {% if site.linkedin_username %}
+      <a class="about-hero__social-link" href="https://linkedin.com/in/{{ site.linkedin_username }}" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+      {% endif %}
+      {% if site.twitter_username %}
+      <a class="about-hero__social-link" href="https://twitter.com/{{ site.twitter_username }}" target="_blank" rel="noopener" aria-label="Twitter">
+        <i class="fab fa-twitter"></i>
+      </a>
+      {% endif %}
+      {% if site.instagram_username %}
+      <a class="about-hero__social-link" href="https://instagram.com/{{ site.instagram_username }}" target="_blank" rel="noopener" aria-label="Instagram">
+        <i class="fab fa-instagram"></i>
+      </a>
+      {% endif %}
+      {% if site.medium_username %}
+      <a class="about-hero__social-link" href="https://medium.com/@{{ site.medium_username }}" target="_blank" rel="noopener" aria-label="Medium">
+        <i class="fab fa-medium-m"></i>
+      </a>
+      {% endif %}
+      {% if site.telegram_username %}
+      <a class="about-hero__social-link" href="https://t.me/{{ site.telegram_username }}" target="_blank" rel="noopener" aria-label="Telegram">
+        <i class="fab fa-telegram-plane"></i>
+      </a>
+      {% endif %}
     </div>
+  </header>
 
-    {% if site.wakatime_username %}
-    <div class="card">
-      <h1>Coding Activity</h1>
-
-      {%- include coding_activity.html -%}
-    </div>
-    {% endif %}
-  </div>
-  <div class="col-lg-8">
+  <div class="about-body">
+    <!-- About Bio -->
     {% if site.author_bio %}
-    <div class="card">
-      <h1 class="card-title">About</h1>
-      <p>{{ site.author_bio }}</p>
-    </div>
-    {% endif %} {% if site.show_author_project_details == true %}
-    <div id="author_projects" class="card">
-      <h1 class="card-title">Projects</h1>
-      <br />
-      {% for project in site.author_project_details %} {% if project.visibility
-      == true %}
-      <div class="row" id="project-card">
-        <div class="col-md-6">
-          <img
-            src="{{ '/assets/img/' | append: project.project_thumbnail | relative_url }}"
-            class="project-img"
-          />
-        </div>
-        <div class="col-md-4 center">
-          <h4 class="experience-title">{{ project.project_title }}</h4>
-          <h6 class="experience-info">{{ project.project_info}}</h6>
-          <p class="experience-desc">{{ project.project_description }}</p>
-          <p>
-            <a class="project-link" href="{{project.project_url}}"
-              >{{ project.project_url}}</a
-            >
-          </p>
-        </div>
+    <section class="about-section">
+      <div class="about-section__header">
+        <span class="about-section__label">Background</span>
+        <h2 class="about-section__title">About</h2>
       </div>
-      <br />
-      {% endif %} {% endfor %}
-    </div>
-    {% endif %} {% if site.show_author_work_experiences == true %}
-    <div class="card">
-      <h1 class="card-title">Work Experience</h1>
-      <br />
-      {% for exp in site.author_work_experiences %} {% if exp.visibility == true
-      %}
-      <div class="row">
-        {% if exp.company_logo != "" %}
-        <div class="col-md-2">
-          <img
-            src="{{ '/assets/img/' | append: exp.company_logo | relative_url }}"
-            class="company-logo"
-          />
-        </div>
-        <div class="col-md-6">
-        {% else %}
-        <div class="col-md-8">
+      <p class="about-bio">{{ site.author_bio }}</p>
+    </section>
+    {% endif %}
+
+    <!-- Skills -->
+    <section class="about-section">
+      <div class="about-section__header">
+        <span class="about-section__label">Expertise</span>
+        <h2 class="about-section__title">Skills</h2>
+      </div>
+      <div class="about-skills">
+        {%- include author_skills.html -%}
+      </div>
+    </section>
+
+    <!-- Projects -->
+    {% if site.show_author_project_details == true %}
+    <section class="about-section" id="author_projects">
+      <div class="about-section__header">
+        <span class="about-section__label">Open Source</span>
+        <h2 class="about-section__title">Projects</h2>
+      </div>
+      <div class="about-projects">
+        {% for project in site.author_project_details %}
+        {% if project.visibility == true %}
+        <a href="{{ project.project_url }}" target="_blank" rel="noopener" class="about-project-card">
+          <div class="about-project-card__thumb">
+            <img src="{{ '/assets/img/' | append: project.project_thumbnail | relative_url }}" alt="{{ project.project_title }}" />
+          </div>
+          <div class="about-project-card__body">
+            <h3 class="about-project-card__title">{{ project.project_title }}</h3>
+            <p class="about-project-card__desc">{{ project.project_description }}</p>
+            <span class="about-project-card__link">
+              <i class="fa fa-external-link-alt"></i> View Project
+            </span>
+          </div>
+        </a>
         {% endif %}
-          <h4 class="experience-title">{{ exp.designation }}</h4>
-          <h6 class="experience-info">{{ exp.company_name}}</h6>
-          <p class="experience-desc">{{ exp.description }}</p>
-          {% if exp.company_url != "" %}<p><a href="{{exp.company_url}}">{{ exp.company_url}}</a></p>{% endif %}
-        </div>
+        {% endfor %}
       </div>
-      {% endif %} {% endfor %}
-    </div>
-    {% endif %} {% if site.show_author_education_details == true %}
-    <div class="card">
-      <h1 class="card-title">Education</h1>
-      <br />
-      {% for detail in site.author_education_details %} {% if detail.visibility
-      == true %}
-      <div class="row">
-        {% if detail.college_logo != "" %}
-        <div class="col-md-2">
-          <img
-            src="{{ '/assets/img/' | append: detail.college_logo | relative_url }}"
-            class="company-logo"
-          />
+    </section>
+    {% endif %}
+
+    <!-- Work Experience -->
+    {% if site.show_author_work_experiences == true %}
+    <section class="about-section">
+      <div class="about-section__header">
+        <span class="about-section__label">Career</span>
+        <h2 class="about-section__title">Work Experience</h2>
+      </div>
+      <div class="about-timeline">
+        {% for exp in site.author_work_experiences %}
+        {% if exp.visibility == true %}
+        <div class="about-timeline__item">
+          <div class="about-timeline__dot"></div>
+          <div class="about-timeline__content">
+            <h3 class="about-timeline__title">{{ exp.designation }}</h3>
+            <span class="about-timeline__company">{{ exp.company_name }}</span>
+            <p class="about-timeline__desc">{{ exp.description }}</p>
+            {% if exp.company_url != "" %}
+            <a class="about-timeline__link" href="{{ exp.company_url }}" target="_blank" rel="noopener">{{ exp.company_url }}</a>
+            {% endif %}
+          </div>
         </div>
-        <div class="col-md-6">
-        {% else %}
-        <div class="col-md-8">
         {% endif %}
-          {% if detail.college_degree != "" %}<h4 class="experience-title">{{detail.college_degree }}</h4>{% endif %}
-          <h6 class="experience-info">{{detail.college_name}}</h6>
-          <p class="experience-desc">{{detail.description}}</p>
-          {% if detail.college_url != "" %}<p><a href="{{detail.college_url}}">{{ detail.college_url}}</a></p>{% endif %}
-        </div>
+        {% endfor %}
       </div>
-      {% endif %} {% endfor %}
-    </div>
+    </section>
+    {% endif %}
+
+    <!-- Education -->
+    {% if site.show_author_education_details == true %}
+    <section class="about-section">
+      <div class="about-section__header">
+        <span class="about-section__label">Learning</span>
+        <h2 class="about-section__title">Education</h2>
+      </div>
+      <div class="about-timeline">
+        {% for detail in site.author_education_details %}
+        {% if detail.visibility == true %}
+        <div class="about-timeline__item">
+          <div class="about-timeline__dot"></div>
+          <div class="about-timeline__content">
+            {% if detail.college_degree != "" %}
+            <h3 class="about-timeline__title">{{ detail.college_degree }}</h3>
+            {% endif %}
+            <span class="about-timeline__company">{{ detail.college_name }}</span>
+            <p class="about-timeline__desc">{{ detail.description }}</p>
+            {% if detail.college_url != "" %}
+            <a class="about-timeline__link" href="{{ detail.college_url }}" target="_blank" rel="noopener">{{ detail.college_url }}</a>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </section>
     {% endif %}
   </div>
-</div>
 </div>
