@@ -581,6 +581,7 @@ input.switch.theme-toggle {
     color: inherit;
     font-size: inherit;
     border: none;
+    white-space: inherit;
   }
 
   /* Inline code */
@@ -591,6 +592,7 @@ input.switch.theme-toggle {
     background: var(--post-accent-soft);
     border-radius: 4px;
     color: var(--post-accent);
+    white-space: nowrap;
   }
 
   /* Lists */
