@@ -24,6 +24,10 @@ html[data-theme="dark"] {
     --button-background-color: #111;
 }
 
+html[data-theme="dark"] #progress-bar {
+    --progress-color: rgba(246, 152, 1, 0.72);
+}
+
 html,
 html[data-theme="light"] {
     --bold-color: rgb(0, 0, 0);
