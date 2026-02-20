@@ -3,9 +3,11 @@ layout: full-width
 ---
 
 <script>
-  $(document).ready(function() {
-    $("#typewriteText").typewrite({
-      actions: [{ type: "{{site.typewrite-text}}" }]
+  document.addEventListener('DOMContentLoaded', function () {
+    if (!window.jQuery || !window.jQuery.fn || typeof window.jQuery.fn.typewrite !== 'function') return;
+    var typewriteText = {{ site.typewrite-text | jsonify }};
+    window.jQuery("#typewriteText").typewrite({
+      actions: [{ type: typewriteText }]
     });
   });
 </script>

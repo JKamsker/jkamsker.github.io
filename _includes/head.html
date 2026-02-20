@@ -141,27 +141,45 @@
 
   <!-- Mode switcher must run early to prevent flash of wrong theme -->
   <script>
-    // Apply saved theme immediately to prevent flash of wrong theme
-    if (!localStorage.getItem("color-theme")) {
-      document.documentElement.setAttribute("data-theme", "dark");
-    } else {
-      document.documentElement.setAttribute("data-theme", localStorage.getItem("color-theme"));
-    }
+    (function () {
+      var storageKey = "color-theme";
 
-    document.addEventListener("DOMContentLoaded", function () {
-      var toggles = document.querySelectorAll(".theme-toggle");
-      toggles.forEach(function (toggle) {
-        toggle.addEventListener("click", function () {
-          if (document.documentElement.getAttribute("data-theme") === "dark") {
-            document.documentElement.setAttribute("data-theme", "light");
-            localStorage.setItem("color-theme", "light");
-          } else {
-            document.documentElement.setAttribute("data-theme", "dark");
-            localStorage.setItem("color-theme", "dark");
-          }
-        });
+      function safeGetItem(key) {
+        try {
+          return localStorage.getItem(key);
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function safeSetItem(key, value) {
+        try {
+          localStorage.setItem(key, value);
+        } catch (err) {
+        }
+      }
+
+      var storedTheme = safeGetItem(storageKey);
+      if (storedTheme === "dark" || storedTheme === "light") {
+        document.documentElement.setAttribute("data-theme", storedTheme);
+      } else {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+
+      if (window.__jk_theme_toggle_bound) return;
+      window.__jk_theme_toggle_bound = true;
+
+      document.addEventListener("click", function (event) {
+        var target = event.target;
+        if (!target || !target.closest) return;
+        if (!target.closest(".theme-toggle")) return;
+
+        var current = document.documentElement.getAttribute("data-theme");
+        var next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        safeSetItem(storageKey, next);
       });
-    });
+    })();
   </script>
 
   <!-- Deferred scripts -->

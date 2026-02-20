@@ -11,15 +11,18 @@ layout: compress
             {{ content }}
         </div>
         {%- include footer.html -%}
-     <script>
-            var options = {
-                classname: 'progressline',
-                id: 'my-id'
-            };
-            var nanobar = new Nanobar( options );
-            nanobar.go( 30 );
-            nanobar.go( 76 );
-            nanobar.go(100);
+      <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof Nanobar === 'undefined') return;
+                var options = {
+                    classname: 'progressline',
+                    id: 'my-id'
+                };
+                var nanobar = new Nanobar( options );
+                nanobar.go( 30 );
+                nanobar.go( 76 );
+                nanobar.go(100);
+            });
         </script>
   </body>
 </html>

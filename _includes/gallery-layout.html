@@ -12,8 +12,10 @@
       </div>
   </div>
 <script type="text/javascript">
-    $(document).ready(function() {
-        $("#imageGallery").lightGallery({
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!window.jQuery || !window.jQuery.fn || typeof window.jQuery.fn.lightGallery !== 'function') return;
+        var gallerySelector = "#imageGallery{% if include.id_number %}-{{ include.id_number }}{% endif %}";
+        window.jQuery(gallerySelector).lightGallery({
           thumbnail: false,
           selector: '.image'
         });
