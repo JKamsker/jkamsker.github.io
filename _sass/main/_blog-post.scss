@@ -592,7 +592,8 @@ input.switch.theme-toggle {
     background: var(--post-accent-soft);
     border-radius: 4px;
     color: var(--post-accent);
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: break-word; /* fallback if JS doesn't load */
   }
 
   /* Lists */
