@@ -215,6 +215,10 @@ function purgeSafelist() {
       'dropup',
       'tooltip',
       'popover',
+      // Nanobar loading bar: elements are created dynamically by JS in bower_components
+      // (not scanned by PurgeCSS), so we must safelist them explicitly.
+      'progressline',
+      'bar',
     ],
   };
 }
