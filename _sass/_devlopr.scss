@@ -116,13 +116,24 @@ ol, ul {
 
 /* On scroll progress bar */
 #progress-bar {
-    background: linear-gradient(to right, #f69801 var(--progress), transparent 0);
+    --progress: 0%;
+    --progress-color: #f69801;
+    background: transparent;
     height: 5px;
     position: fixed;
     width: 100%;
     overflow: hidden;
-    z-index: 1;
+    z-index: 1031;
     margin-top: 25px;
+    pointer-events: none;
+}
+
+#progress-bar::before {
+    content: '';
+    display: block;
+    width: var(--progress, 0%);
+    height: 100%;
+    background: var(--progress-color);
 }
 
 body {

@@ -231,10 +231,6 @@ input.switch.theme-toggle {
   display: none !important;
 }
 
-#progress-bar {
-  background: linear-gradient(to right, var(--post-accent, #E89B3E) var(--progress), transparent 0);
-}
-
 @media (max-width: 991px) {
   #progress-bar {
     margin-top: 0 !important;
