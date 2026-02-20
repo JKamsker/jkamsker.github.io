@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "The Site Is on Fire. Here's Your FTP Password. Good Luck."
-summary: A client's legacy SilverStripe site had the CSV export button killing the server, filters that were pure theater, and a statistics page that took minutes to load. The job was just "build a bot to extract the data." My brain goblin had other plans. I'm not even a PHP developer, so I built a CLI toolbox to give my AI agent eyes and legs, pointed it at the fire, and let it work. File by file. Over FTP. In 2026.
+summary: A legacy SilverStripe site where the CSV export killed the server and the filters were theater. I built a CLI toolbox, pointed an AI agent at the fire, and fixed it file by file over FTP. In 2026.
 author: jkamsker
 date: '2026-02-18 12:00:00 +0000'
 category: devlog
@@ -38,8 +38,6 @@ faq:
   - q: "Do you actually enjoy this kind of work?"
     a: "I know what I said. Don't judge me."
 ---
-
-> **TL;DR:** A client's legacy SilverStripe site had admin filters that were decorative, a statistics page that took minutes to load, and a CSV export button that just killed the server. The paginated dashboard technically worked - it just lied to you. The job was simple: build a bot to extract the data. I did that by lunch. Then my brain goblin wouldn't let it go. I haven't written PHP since the dark ages, but I got FTP access, built a CLI toolbox so my AI agent could see the server, and let it track down the bugs semi-autonomously. Deployed fixes file-by-file over FTP. Yes, FTP. No, I don't want to talk about it.
 
 ## A Confession
 
