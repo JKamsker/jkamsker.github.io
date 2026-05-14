@@ -139,7 +139,7 @@ The workflow now looks almost insultingly simple:
 
 And because Codex has a browser built in, all of this happens *in one app*. The agent sees the instructions. It sees the files. It sees the website. It sees the outputs. It sees the problems. Everything lives in the same loop.
 
-## The Advantage That Dwarfed the Objection
+## The Trade
 
 I'd assumed non-determinism would be the dealbreaker. An agent that sometimes does the right thing and sometimes confidently marches off a cliff is a terrible production component, *if* the cost of a wrong output is high and the time-to-detect is slow.
 
