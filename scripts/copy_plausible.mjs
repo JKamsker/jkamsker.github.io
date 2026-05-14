@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const DEFAULT_SOURCE_URL =
   'https://trace.kamsker.at/js/script.outbound-links.pageview-props.tagged-events.js';
-const DEFAULT_OUTPUT_PATH = 'assets/js/plausible.outbound-links.pageview-props.tagged-events.js';
+const DEFAULT_OUTPUT_PATH = 'assets/js/site-events.js';
 const DEFAULT_FALLBACK_PATH =
   'scripts/fallback/plausible.outbound-links.pageview-props.tagged-events.js';
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
