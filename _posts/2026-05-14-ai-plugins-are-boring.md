@@ -155,7 +155,9 @@ I gave up determinism. What I got back was the ability to steer. For image produ
 
 ## Why This Matters Beyond One Pipeline
 
-For decades, business software has worked like this:
+For about twenty years, business software has come in two flavors: too dumb to be useful beyond their intended scope, or too configurable to use without a consultant on retainer telling you which knobs to turn. Pick your discomfort.
+
+Either way, it works like this:
 
 Here's the app. Here's the workflow. Here are the buttons. Here's the approved way to use it. Now please - *please* - adapt your business process to our product.
 
@@ -183,6 +185,20 @@ You don't need a developer, a consultant, or an SAP-certified shaman charging â‚
 A non-technical user can finally change how their software behaves - *meaningfully*, not "I rearranged the dashboard widgets" - without a developer in the loop. Not by clicking through a settings page someone pre-imagined for them. By describing what they want, in their own words, to a thing that can read the scaffold and figure out the rest.
 
 Enterprise vendors should be more nervous than they are. Not about the AI. About the fact that the customization layer - the thing they charge six figures and six months for - just became a chat window.
+
+## I Still Have a Job, Apparently
+
+The other thing that's quietly changed is the shape of the work I do.
+
+I used to build whole products. Frontend, backend, validators, settings pages, the admin panel nobody asked for but everyone needs. End-to-end systems that tried to predict every decision a user might ever make and bake it into a form field.
+
+Now I build ports. A CLI here, an API there, an MCP server if the agent needs to talk to something custom, a couple of scripts that do one thing well. Small surfaces with defined interfaces that behave the same way every time they're called.
+
+The agent docks onto those ports and does the rest. The ports do the deterministic work - the scripts don't hallucinate, the API returns what it returns, the database query is the database query. The agent does the steering on top: when the business case changes, you don't rewrite the ports, you tell the agent something different and it composes the same ports in a different order.
+
+It's the same trade I described earlier - give up determinism, get the ability to steer - viewed from the builder's side. The ports stay deterministic. The composition stops being.
+
+What disappears is most of the work I used to spend my time on. The CRUD admin panel. The advanced settings tab. The five-step wizard. The validator UI for the validator schema. What's left is the half that actually has to be correct.
 
 ## But Not for Everything
 
