@@ -20,7 +20,7 @@ faq:
     a: "Will your sacred Excel sheet scale? Exactly."
 ---
 
-> **TL;DR:** I needed to build a mass image production pipeline. I tried it the normal way. Twice. Both attempts collapsed. Then I gave up and built a Codex plugin out of markdown, scripts, and a tiny website - half expecting to throw it away by Friday. It's in production. The user steers it by talking. Underwhelming on paper. Not in practice.
+> **TL;DR:** I needed to build a mass image production pipeline. I tried it the normal way. Twice. Both attempts collapsed. Then I gave in to the AI hype.
 
 ## A Quick Disclaimer Before We Start
 
