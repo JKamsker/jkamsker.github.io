@@ -3,7 +3,7 @@ layout: post
 title: "AI Plugins Are Boring. Until They Click."
 summary: A few markdown files, some scripts, and a tiny website. Sounds underwhelming - until an agent wraps around it and suddenly your business process can explain itself, adapt on command, and make enterprise consultants nervous.
 author: jkamsker
-date: '2026-05-14 16:00:00 +0000'
+date: '2026-05-14 16:00:00 +0200'
 category: devlog
 thumbnail: /assets/img/posts/ai-plugins-click.webp
 keywords: ai, agents, plugins, codex, workflow-automation, business-process, developer-tools
