@@ -1,5 +1,5 @@
 [build]
-  command = "npm ci && bundle exec jekyll build && node scripts/optimize_css.mjs build --benchmark scripts/css_benchmark.json"
+  command = "npm ci && npm run build:prod"
   publish = "build"
 
 [build.environment]

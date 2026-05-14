@@ -4,8 +4,9 @@
   "description": "Personal website and blog of Jonas Kamsker.",
   "private": true,
   "scripts": {
+    "copy:plausible": "node scripts/copy_plausible.mjs build",
     "optimize:css": "node scripts/optimize_css.mjs build --benchmark scripts/css_benchmark.json",
-    "build:prod": "bundle exec jekyll build && node scripts/optimize_css.mjs build --benchmark scripts/css_benchmark.json"
+    "build:prod": "bundle exec jekyll build && node scripts/copy_plausible.mjs build && node scripts/optimize_css.mjs build --benchmark scripts/css_benchmark.json"
   },
   "type": "module",
   "devDependencies": {

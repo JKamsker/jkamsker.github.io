@@ -139,6 +139,21 @@
       var base_url = '{{ site.baseurl | default: "" }}' ;
   </script>
 
+  {% if jekyll.environment == "production" %}
+  <!-- Plausible Analytics -->
+  <script
+    defer
+    data-domain="blog.kamsker.at"
+    data-api="https://trace.kamsker.at/api/event"
+    src="{{ '/assets/js/plausible.outbound-links.pageview-props.tagged-events.js' | relative_url }}"
+  ></script>
+  <script>
+    window.plausible = window.plausible || function() {
+      (window.plausible.q = window.plausible.q || []).push(arguments);
+    };
+  </script>
+  {% endif %}
+
   <!-- Mode switcher must run early to prevent flash of wrong theme -->
   <script>
     (function () {

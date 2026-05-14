@@ -91,8 +91,10 @@ jobs:
         env:
           JEKYLL_ENV: production
 
-      - name: Optimize vendor CSS (bundle + purge + minify)
-        run: node scripts/optimize_css.mjs build --benchmark scripts/css_benchmark.json
+      - name: Copy analytics and optimize vendor CSS
+        run: |
+          node scripts/copy_plausible.mjs build
+          node scripts/optimize_css.mjs build --benchmark scripts/css_benchmark.json
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -143,8 +145,10 @@ jobs:
         env:
           JEKYLL_ENV: production
 
-      - name: Optimize vendor CSS (bundle + purge + minify)
-        run: node scripts/optimize_css.mjs build --benchmark scripts/css_benchmark.json
+      - name: Copy analytics and optimize vendor CSS
+        run: |
+          node scripts/copy_plausible.mjs build
+          node scripts/optimize_css.mjs build --benchmark scripts/css_benchmark.json
 
       - name: deploy to firebase
         uses: w9jds/firebase-action@master

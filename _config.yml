@@ -231,6 +231,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - node_modules/
+  - scripts/fallback/
   - vendor/bundle/
   - vendor/cache/
   - vendor/gems/
