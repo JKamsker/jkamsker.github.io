@@ -46,7 +46,7 @@ The naive belief was that if I gave users enough knobs, they'd have everything t
 
 What I ended up with was a UI that looked like the cockpit of a 747 designed by someone who has never flown, for users who just wanted to land at the nearest airport.
 
-I thought I had made it flexible. I'd watched enough ThePrimeagen videos to dodge that pitfall. The next one wasn't on the channel.
+I thought I had made it flexible. I'd watched enough [ThePrimeagen](https://www.youtube.com/c/theprimeagen) videos to dodge that pitfall. The next one wasn't on the channel.
 
 The user came back the next day:
 
@@ -192,7 +192,7 @@ Absolutely not.
 
 I look terrible in orange, and any soap-related fantasies stay firmly in the voluntary, non-state-sponsored part of my life.
 
-I'm not letting a clanker hallucinate my taxes. That is not automation. That is how you speedrun your way into a dedicated WBS podcast episode.
+I'm not letting a clanker hallucinate my taxes. That is not automation. That is how you speedrun your way into a dedicated [WBS podcast episode](https://open.spotify.com/show/2uDzih4Tgu80qsrKl5rTQ2).
 
 The trade I described earlier - give up determinism, get the ability to steer - only works when wrong outputs are cheap and detectable. Taxes are neither. Medical dosing is neither. Anything where the wrong answer ships silently and surfaces weeks later is neither. Plug an agent into that and you're not automating - you're gambling with good UX.
 
