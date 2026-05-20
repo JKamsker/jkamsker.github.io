@@ -8,7 +8,7 @@ category: devlog
 thumbnail: /assets/img/posts/forgejo-rider-plugin.webp
 keywords: forgejo, rider, jetbrains, intellij idea, pycharm, webstorm, phpstorm, goland, clion, rubymine, rustrover, datagrip, dataspell, android studio, mps, plugin, pull-requests, code-review, self-hosted, gitea
 tags: [forgejo, jetbrains, devops, rider, intellij]
-permalink: /blog/forgejo-rider-plugin/
+permalink: /blog/forgejo-on-jetbrains-ides/
 faq:
   - q: "Why not just use the browser?"
     a: "I tried. For three months. The alt-tab tax is real, and code review in a browser is not what Rider is for."
