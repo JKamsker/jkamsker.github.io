@@ -66,7 +66,7 @@ I've been daily-driving this for a few months. I do my code reviews in Rider aga
 
 **It's paid, closed source, and one person.** I built this because we needed it. It's on the JetBrains Marketplace as a commercial plugin - that's what funds keeping it current against Rider 2026.1+ and the moving target of Forgejo's `next` release. There's no public repo. If you evaluate tools by reading their source, this won't satisfy that.
 
-**It scrapes the web UI for the Forgejo Actions tab.** Forgejo's official API doesn't yet expose runs, logs, artifacts, cancel, or rerun. So the plugin logs into your Forgejo instance the same way your browser does - username and password, stored through your IDE's secure credential vault (the same one that holds your Git passwords) - and reads the data from the web routes. The pact, in the words of [`fj-ex`](https://github.com/JKamsker/forgejo-cli-ex) which solved the same problem from the terminal side last year: I scrape, they ship, I pray. The day Forgejo exposes proper API endpoints for Actions, the plugin switches over with no user-visible change.
+**It scrapes the web UI for the Forgejo Actions tab.** Forgejo's official API doesn't yet expose runs, logs, artifacts, cancel, or rerun. So the plugin logs into your Forgejo instance the same way your browser does - username and password, stored through your IDE's secure credential vault (the same one that holds your Git passwords) - and reads the data from the web routes. The pact, in the words of [`fj-ex`](https://blog.kamsker.at/blog/how-fj-ex-was-built/) which solved the same problem from the terminal side last year: I scrape, they ship, I pray. The day Forgejo exposes proper API endpoints for Actions, the plugin switches over with no user-visible change.
 
 **Inline review threads are partially landed.** Submitting reviews works. Inline comments in the diff viewer work, with replies and reactions. The native editor *gutter inlay* polish - the kind of thing where the gutter icon in your editor opens the thread popup directly - is in progress. If you do your reviews in the dedicated diff view, you won't notice. If you live in the editor itself, you will.
 
@@ -91,7 +91,7 @@ In rough order of how much I want them:
 3. A push-notification "create PR" prompt after you push a feature branch.
 4. Pushing from inside the Share Project flow - today it creates the repo and hands you the remote-setup commands.
 
-If your company is sitting on a Forgejo migration and the IDE story is what's holding it up - this is the part where it stops holding it up.
+If your company is sitting on a Forgejo migration and the IDE story is what's holding it up - it doesn't have to be anymore.
 
 ## Try it, and tell me what's broken
 
