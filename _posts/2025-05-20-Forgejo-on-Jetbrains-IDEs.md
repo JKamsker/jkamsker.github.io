@@ -1,138 +1,96 @@
 ---
 layout: post
-title: "JetBrains Ships a GitHub Plugin. Nobody Ships a Forgejo One. So I Built It."
-summary: We moved the company off GitHub onto self-hosted Forgejo. Suddenly the PR workflow in Rider was alt-tab and a browser tab. So I carved the GitHub plugin's shape out of the bundled Rider code and rebuilt it against Forgejo's REST API. It's been my daily PR tool for a few months now.
+title: "We Left GitHub for Forgejo. The IDE Plugin Didn't Come With Us. So I Built One."
+summary: My company moved off GitHub onto self-hosted Forgejo. The migration was clean; what broke was code review. JetBrains ships a pull-request tool window for GitHub and nothing equivalent for Forgejo, so for three months we did reviews in a browser. This is the plugin I built to stop doing that.
 author: jkamsker
 date: '2026-05-20 12:00:00 +0200'
 category: devlog
-thumbnail: /assets/img/posts/forgejo-rider-plugin.webp
+thumbnail: /assets/img/posts/forgejo-rider-2.webp
 keywords: forgejo, rider, jetbrains, intellij idea, pycharm, webstorm, phpstorm, goland, clion, rubymine, rustrover, datagrip, dataspell, android studio, mps, plugin, pull-requests, code-review, self-hosted, gitea
 tags: [forgejo, jetbrains, devops, rider, intellij]
-permalink: /blog/forgejo-on-jetbrains-ides/
+permalink: /blog/forgejo-rider-plugin/
 faq:
-  - q: "Why not just use the browser?"
-    a: "I tried. For three months. The alt-tab tax is real, and code review in a browser is not what Rider is for."
-  - q: "Why not contribute to the bundled JetBrains GitHub plugin?"
-    a: "It's GitHub-specific top to bottom - IDs, OAuth flow, GraphQL DTOs, the VFS key. Forking shape was always going to be cleaner than retrofitting a generic Git-host abstraction."
+  - q: "Why not just keep using the browser?"
+    a: "I tried. For three months. The alt-tab tax is real, and code review in a browser isn't what an IDE is for."
+  - q: "Why not contribute the change to JetBrains' bundled GitHub plugin?"
+    a: "The bundled plugin is GitHub-specific from the type system up - there's no generic Git-host layer to slot a Forgejo backend into. Building separately was always going to be cleaner than retrofitting one."
   - q: "Is this on the JetBrains Marketplace?"
-    a: "Yes - [plugins.jetbrains.com/plugin/31556-forgejo](https://plugins.jetbrains.com/plugin/31556-forgejo). It's a paid plugin, closed source."
-  - q: "Does it work with Codeberg / Gitea?"
-    a: "Codeberg should work, it's Forgejo. Gitea probably works too for the REST endpoints we hit; the web-session paths are Forgejo-shaped and may need adjustment."
+    a: "Yes - [plugins.jetbrains.com/plugin/31556-forgejo](https://plugins.jetbrains.com/plugin/31556-forgejo). It's a paid, closed-source plugin."
+  - q: "Does it work with Codeberg or Gitea?"
+    a: "Codeberg is Forgejo, so yes. Gitea probably works for the REST endpoints; the web-session paths are Forgejo-shaped and may need adjustment."
 ---
 
-> **TL;DR:** My company moved off GitHub to self-hosted Forgejo. JetBrains ships a GitHub plugin, not a Forgejo one. So I built `forgejo-rider-2` - pull request list, review, merge, clone, and a Forgejo Actions tab, all from inside Rider. It's been my daily PR tool for a few months now.
+> **TL;DR:** My company moved off GitHub to self-hosted Forgejo. The migration went fine. The Rider code-review workflow didn't survive it. So I built the Forgejo plugin nobody else was shipping.
 
 ## Off GitHub
 
-My company decided to stop running our source code through a US-hosted service that goes down sometimes and answers to a political climate we don't get a vote in. The GitHub outages weren't the headline - the headline was "if this gets weird, do we want our codebase living there?" We didn't.
+A few months ago my company moved our codebase off GitHub onto a self-hosted Forgejo instance.
 
-So we picked Forgejo, stood up an instance, and migrated.
+The reasons were the usual ones for 2026. The outages weren't even the worst of it - what we actually didn't want was our source code living inside a US-hosted service that answers to a political climate we don't get a vote in. So we picked Forgejo, stood up an instance, pushed everything, and migrated.
 
-The day-to-day was fine for a while. Push, pull, browse files in the web UI, do the occasional review through the browser. Tolerable. Familiar.
+The migration worked. Push, pull, branch, merge from the command line - all fine. Web UI for browsing - fine.
 
-What I missed was Rider's PR workflow. That little tool window where you pick a PR, see the diff inline, comment on a line, hit merge, close the tab. JetBrains ships [GitHub support](https://www.jetbrains.com/help/rider/Work_with_GitHub_pull_requests.html) bundled into Rider - it's been there for years, it's good, and we'd been using it daily without thinking about it.
+What broke was the IDE side.
 
-The moment we left GitHub, that tool window stopped being useful. Three months of alt-tabbing to a browser to do code review, and the brain goblin started taking notes.
+Before we left, code review happened inside Rider. There's a pull-request tool window built into the IDE: list of open PRs, click one, the diff opens inline, you comment on a line, reply to a teammate, hit merge. JetBrains ships that for GitHub. They don't ship it for anything else.
+
+The day we left GitHub, that tool window stopped being useful. For three months, doing a code review meant alt-tabbing to a browser, finding the PR, writing comments in a web textarea, switching back to write the follow-up code, alt-tabbing again. Multiplied across a team that does real review every day, it stopped being a small thing.
+
+That's the part where the brain goblin started taking notes.
 
 ## The Gap
 
-JetBrains ships GitHub support. There's no Gitea plugin either, despite a few abandoned attempts on the Marketplace. The bundled GitHub plugin is a closed shape - it depends on `org.jetbrains.plugins.github`, it owns the `ghpr` VFS key, it has GitHub OAuth wired into JetBrains' own OAuth service, and most of the PR data flow is GitHub GraphQL queries with GitHub node IDs.
+I assumed someone had solved this. Forgejo isn't obscure - Codeberg runs on it, half the self-hosted community uses it, and Gitea (the project it forked from) is older still. Surely there was a JetBrains plugin.
 
-You can't just point it at a different host. The "host" is hardcoded into the type system.
+There wasn't. A few abandoned attempts on the Marketplace for Gitea, nothing maintained, nothing for Forgejo at all.
 
-What you can do is take the bundled plugin's source as a reference, throw out everything GitHub-specific, and rebuild the same shape against a different API. That's `forgejo-rider-2`.
+JetBrains' GitHub support isn't generic. The plugin is GitHub-specific from the type system up - the data classes assume GitHub's API, the authentication goes through GitHub's OAuth flow, the URL handling assumes github.com paths. You can't point it at a Forgejo server. There's no setting for that, and the code wouldn't know what to do with the response if you did.
+
+What you can do is take the bundled plugin's source as a structural reference, throw out everything GitHub-specific, and rebuild the same shape against Forgejo's API.
+
+So I did.
 
 ## What it does
 
-Same surface as Rider's GitHub support, against Forgejo:
+If you've used Rider's GitHub tool window, you already know how this one works. Same surface, against Forgejo:
 
-- **Account + clone.** Add a Forgejo account with a personal access token. Test connection. Clone dialog with repo search across your account's user and org repos. The clone URL comes from Forgejo's `clone_url`/`ssh_url` when available, with a generated fallback for older instances.
-- **PR tool window.** List PRs with state/author/label filters, paged through Forgejo's `Link` headers. Open a PR as an editor tab. Title, body, branches, commits, changed files, mergeability, conflicts, labels, assignees, reviewers, draft state (Forgejo's `WIP: ` title convention).
-- **Diff and review.** Show changed files. Open the diff in Rider's normal diff viewer. Inline review threads, replies, edit/delete comments, reactions. Submit review as approve / comment / request changes. Apply suggested changes locally. The "viewed" state on files syncs back through the Forgejo web session.
-- **PR actions.** Close, reopen, merge (merge, squash, rebase - whatever the repo allows), delete branch on merge when supported.
-- **Git integration.** Repository hosting service so the right account is picked up for HTTPS auth (PAT as the password - Forgejo's standard pattern). Current-branch PR presenter in the branches popup. Open/copy PR link from the editor. Protected-branch awareness refreshed after fetch.
-- **Forgejo Actions.** A second tab in the Forgejo tool window. Workflows, runs, jobs, logs (streamed from the same endpoints `fj-ex` hits - yes, the web routes), artifacts, cancel, rerun, rerun-failed, dispatch with inputs, runner tokens, queued job visibility.
-- **Share to Forgejo.** Create a repo for the current project under your user or an org. The PoC creates the repo and gives you the remote setup commands; pushing from inside the IDE is on the list.
+- **Pull requests.** List open and closed PRs, filter by author, label, state. Open a PR as a tab inside the IDE - title, body, branches, commits, changed files, assignees, reviewers, CI status, mergeability.
+- **Review.** The diff opens in Rider's normal diff viewer. Comment on lines, reply, react with emoji, mark files as viewed. Submit your review as approve, comment, or request changes. Suggested changes can be applied locally with a click.
+- **Merge.** Merge, squash, or rebase - whichever methods your Forgejo repo allows. Delete the source branch on merge when the repo is configured for it.
+- **Clone.** Add a Forgejo account with a personal access token, then clone any repo you have access to from the IDE's clone dialog. HTTPS auth is wired through automatically; the IDE picks up the right account when you push or pull.
+- **Forgejo Actions.** A second tab in the Forgejo tool window: workflows, runs, jobs, logs, artifacts, cancel, rerun. The same surface the web UI gives you, in the IDE, where you're already standing.
 
-If you've used the bundled GitHub plugin, you already know how this one works.
+I've been daily-driving this for a few months. I do my code reviews in Rider again. I haven't opened the Forgejo web UI for a PR in weeks.
 
-## How it's wired
+## What it is, and isn't
 
-The bundled GitHub plugin is REST plus a lot of GraphQL - PR search, review threads, mergeability, viewed-file state, the works. Forgejo is REST-first, OpenAPI-documented at `/api/swagger`. So the port was mostly unhooking GraphQL DTOs and replacing them with REST DTOs. The GitHub plugin's GraphQL model did not enjoy being asked to be a REST model, and a lot of the work was talking it down.
+**It's paid, closed source, and one person.** I built this because we needed it. It's on the JetBrains Marketplace as a commercial plugin - that's what funds keeping it current against Rider 2026.1+ and the moving target of Forgejo's `next` release. There's no public repo. If you evaluate tools by reading their source, this won't satisfy that.
 
-The REST surface looks roughly like you'd expect:
+**It scrapes the web UI for the Forgejo Actions tab.** Forgejo's official API doesn't yet expose runs, logs, artifacts, cancel, or rerun. So the plugin logs into your Forgejo instance the same way your browser does - username and password, stored through your IDE's secure credential vault (the same one that holds your Git passwords) - and reads the data from the web routes. The pact, in the words of [`fj-ex`](https://github.com/JKamsker/forgejo-cli-ex) which solved the same problem from the terminal side last year: I scrape, they ship, I pray. The day Forgejo exposes proper API endpoints for Actions, the plugin switches over with no user-visible change.
 
-```text
-GET    /api/v1/user
-GET    /api/v1/repos/{owner}/{repo}/pulls?state=open&page=1&limit=50
-GET    /api/v1/repos/{owner}/{repo}/pulls/{index}
-GET    /api/v1/repos/{owner}/{repo}/pulls/{index}/files
-POST   /api/v1/repos/{owner}/{repo}/pulls/{index}/reviews
-POST   /api/v1/repos/{owner}/{repo}/pulls/{index}/merge
-```
+**Inline review threads are partially landed.** Submitting reviews works. Inline comments in the diff viewer work, with replies and reactions. The native editor *gutter inlay* polish - the kind of thing where the gutter icon in your editor opens the thread popup directly - is in progress. If you do your reviews in the dedicated diff view, you won't notice. If you live in the editor itself, you will.
 
-Authorization is `token <PAT>`. Pagination is `page`/`limit` with `Link` and `X-Total-Count` headers - same shape as GitHub, different spellings.
+**OAuth isn't done yet.** Authentication is personal access tokens. Forgejo's OAuth provider exists, but its docs say [OAuth scopes aren't implemented](https://forgejo.org/docs/next/user/oauth2-provider/), so PAT is the practical option today. OAuth lands when Forgejo's does.
 
-Two things Forgejo's REST API doesn't (yet) expose cleanly:
-
-1. **Actions runs, logs, artifacts, cancel, rerun.** Same problem [`fj-ex`](https://github.com/JKamsker/forgejo-cli-ex) ran into last year. The data is in the web UI; the API doesn't have it. The plugin uses a native Kotlin Forgejo *web session* - cookies, CSRF, the works - to call the same routes the browser does. Login is username + password against Forgejo's web form, stored through PasswordSafe. Is this ideal? No. Is there an alternative for Actions in 2026? Also no.
-2. **A few PR-side niceties** like viewed-file sync and thread resolve/unresolve. Same web-session path. Same caveat.
-
-So the plugin's API client is two layers: REST against `/api/v1` for everything Forgejo exposes properly, and a web-session client for the things it doesn't. Each call site checks the connected instance's `/api/v1/version` and `/swagger.v1.json` and disables features that the target Forgejo doesn't have, rather than crashing the tool window.
-
-On the Rider side, this is a standard IntelliJ Platform Gradle Plugin 2.x project targeting Rider 2026.1+. The `plugin.xml` depends on `Git4Idea`, the IntelliJ collaboration tools, and the bundled VCS modules:
-
-```kotlin
-intellijPlatform {
-    rider("2026.1")
-    bundledPlugin("Git4Idea")
-    bundledPlugin("com.intellij.tasks")
-    bundledModule("intellij.platform.collaborationTools")
-    bundledModule("intellij.platform.collaborationTools.auth")
-    bundledModule("intellij.platform.vcs.dvcs")
-    // …vcs.dvcs.impl, vcs.impl, vcs.log, etc.
-}
-```
-
-It's a dynamic plugin - installs and unloads without restarting Rider - and `verifyPlugin` runs against Rider and Android Studio in CI.
-
-## Where it bites
-
-**Line-level review threads are partially landed.** Submit review (approve / comment / request changes) works. Inline threads in the editor work, with replies and reactions, and you can resolve/unresolve through the web session. The native editor *gutter inlay* polish - the kind of thing GitHub's plugin has where the gutter icon opens the thread popup directly - is in progress, not finished. If you do all your reviews in the dedicated diff view, you won't notice. If you live in the editor itself, you will.
-
-**OAuth isn't done.** Authentication is personal access tokens against `/users/<you>/settings/applications` on your Forgejo instance. Forgejo's OAuth2 provider exists, but its docs say [OAuth scopes aren't implemented yet](https://forgejo.org/docs/next/user/oauth2-provider/), so PAT is the practical option today. OAuth is on the list when scopes land.
-
-**Actions surfaces depend on the web session.** Workflow runs, logs, artifacts - same pact as `fj-ex`. If Forgejo redesigns the Actions UI in a way that changes the route shape, those tabs will need fixing. The pact: I scrape, they ship, I pray.
-
-**Single-developer commercial software.** Paid, closed source, one maintainer (me). I track Rider 2026.1.x and the Forgejo `next` API. If you need vendor-supported software with a phone number to call when it breaks, this isn't that - it's me, with a financial incentive to keep it working.
-
-**Closed source.** No public repo. If reading other people's plugin code is part of how you evaluate a tool, this won't satisfy that - only the public-facing behavior is observable.
-
-**One plugin, thirteen JetBrains IDEs.** The descriptor declares support for Android Studio, CLion, DataGrip, DataSpell, GoLand, IntelliJ IDEA, MPS, PhpStorm, PyCharm, Rider, RubyMine, RustRover, and WebStorm. I've only daily-driven it in Rider. Reports from other IDEs are welcome.
+**Thirteen JetBrains IDEs, one daily driver.** The plugin works in Android Studio, CLion, DataGrip, DataSpell, GoLand, IntelliJ IDEA, MPS, PhpStorm, PyCharm, Rider, RubyMine, RustRover, and WebStorm. I'm a .NET developer, so my daily driver is Rider. The other twelve are tested through JetBrains' plugin verifier, but reports from anyone using them in anger are welcome.
 
 ## Installing
 
-It's on the JetBrains Marketplace: <https://plugins.jetbrains.com/plugin/31556-forgejo>. Works in Android Studio, CLion, DataGrip, DataSpell, GoLand, IntelliJ IDEA, MPS, PhpStorm, PyCharm, Rider, RubyMine, RustRover, and WebStorm.
+It's on the JetBrains Marketplace: <https://plugins.jetbrains.com/plugin/31556-forgejo>.
 
-From inside any of those IDEs: `Settings → Plugins → Marketplace`, search for "Forgejo", install. The plugin is dynamic-load-clean, so no restart is required.
+From inside any of the supported IDEs: `Settings → Plugins → Marketplace`, search for "Forgejo", install. No restart needed - the plugin is dynamic-load-clean.
 
-After install: `Settings → Version Control → Forgejo`. Add your server URL (e.g. `https://codeberg.org` or your self-hosted instance) and a personal access token - generate one inside Forgejo under `Settings → Applications → Generate New Token`. Hit `Test Connection`. If the token works, the PR tool window starts populating itself.
-
-## What's not in this post
-
-The dynamic-plugin-reload story - making the plugin survive an in-place update in a running Rider - was its own multi-week side quest. Tool window listeners, custom editor tabs, diff virtual files, all need explicit disposal or the classloader pins itself and unload silently fails. That's a whole separate post.
-
-The Forgejo migration itself - how we moved repos, CI configs, secrets - also belongs in its own writeup. This one is about the IDE side.
+Then `Settings → Version Control → Forgejo`. Add your server URL (`https://codeberg.org`, or whatever your self-hosted instance is) and a personal access token. Forgejo generates tokens under `Settings → Applications → Generate New Token` in its own web UI. Hit `Test Connection`. If the token works, the PR tool window starts populating itself.
 
 ## What's next
 
-In order of how much I want each of them:
+In rough order of how much I want them:
 
-1. Native editor gutter inlay for review threads, to close the gap with GitHub's plugin.
-2. OAuth2 with PKCE, the day Forgejo's OAuth scopes land in a release.
-3. Push-notification "create PR" prompt after a Git push.
-4. Push-from-IDE inside the Share Project flow - today it creates the repo and hands you the remote-setup commands.
+1. Native editor gutter inlay for review threads, to close the last gap with JetBrains' GitHub plugin.
+2. OAuth2 with PKCE, the day Forgejo's OAuth scopes land.
+3. A push-notification "create PR" prompt after you push a feature branch.
+4. Pushing from inside the Share Project flow - today it creates the repo and hands you the remote-setup commands.
+
+If your company is sitting on a Forgejo migration and the IDE story is what's holding it up - this is the part where it stops holding it up.
 
 Marketplace listing: <https://plugins.jetbrains.com/plugin/31556-forgejo>. Bug reports, feature requests, and reviews go through the plugin page.
-
-*(P.S.: If your company is sitting on a Forgejo migration and the IDE story is what's stopping you - try it.)*
