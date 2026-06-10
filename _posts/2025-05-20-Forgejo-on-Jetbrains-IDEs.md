@@ -93,4 +93,10 @@ In rough order of how much I want them:
 
 If your company is sitting on a Forgejo migration and the IDE story is what's holding it up - this is the part where it stops holding it up.
 
-Marketplace listing: <https://plugins.jetbrains.com/plugin/31556-forgejo>. Bug reports, feature requests, and reviews go through the plugin page.
+## Try it, and tell me what's broken
+
+The plugin ships with a one-month free trial. Install it, point it at your Forgejo instance, and run real reviews through it for a few weeks.
+
+Send me feedback and I'll add one to two months of free subscription on top of that trial. I built this against one daily driver - Rider, on my own team's Forgejo setup. The twelve other IDEs, the server configs I've never seen, the review habits that aren't mine: that's the stuff I can't catch from where I'm standing. If you hit a bug, miss a feature, or find something that feels wrong in your IDE, that's worth a month or two to me.
+
+Bug reports, feature requests, and reviews go through the [Marketplace page](https://plugins.jetbrains.com/plugin/31556-forgejo) - leave a note there or reach me through it, and tell me where to send the extension.
