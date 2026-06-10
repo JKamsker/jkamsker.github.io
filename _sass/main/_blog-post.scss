@@ -336,13 +336,22 @@ input.switch.theme-toggle {
   &__byline {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--post-text-secondary);
+  }
+
+  &__byline-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+    flex: 1 1 auto;
   }
 
   &__author {
@@ -365,13 +374,20 @@ input.switch.theme-toggle {
   }
 
   &__install {
+    --install-scale: 1;
     margin-left: auto;
-    display: inline-flex;
-    align-items: center;
+    flex: 0 0 auto;
+    align-self: center;
+    width: calc(245px * var(--install-scale));
+    height: calc(48px * var(--install-scale));
 
     iframe {
       display: block;
       border: 0;
+      width: 245px;
+      height: 48px;
+      transform: scale(var(--install-scale));
+      transform-origin: top left;
     }
   }
 }
@@ -1033,6 +1049,10 @@ input.switch.theme-toggle {
     font-size: 0.72rem;
   }
 
+  .post-header__install {
+    --install-scale: 0.82;
+  }
+
   .post-content {
     font-size: 1.05rem;
 
@@ -1074,6 +1094,10 @@ input.switch.theme-toggle {
 @media (max-width: 480px) {
   .post-header__title {
     font-size: 1.6rem !important;
+  }
+
+  .post-header__install {
+    --install-scale: 0.68;
   }
 
   .post-content {
