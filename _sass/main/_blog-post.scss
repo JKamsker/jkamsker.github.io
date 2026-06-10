@@ -363,6 +363,17 @@ input.switch.theme-toggle {
   &__reading-time {
     color: var(--post-text-secondary);
   }
+
+  &__install {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+
+    iframe {
+      display: block;
+      border: 0;
+    }
+  }
 }
 
 .post-category-pill {

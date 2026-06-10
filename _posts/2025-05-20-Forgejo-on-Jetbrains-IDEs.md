@@ -6,6 +6,7 @@ author: jkamsker
 date: '2026-05-20 12:00:00 +0200'
 category: devlog
 thumbnail: /assets/img/posts/forgejo-rider-plugin.webp
+jetbrains_plugin_id: 31556
 keywords: forgejo, rider, jetbrains, intellij idea, pycharm, webstorm, phpstorm, goland, clion, rubymine, rustrover, datagrip, dataspell, android studio, mps, plugin, pull-requests, code-review, self-hosted, gitea
 tags: [forgejo, jetbrains, devops, rider, intellij]
 permalink: /blog/forgejo-rider-plugin/

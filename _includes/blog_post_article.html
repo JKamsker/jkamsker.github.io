@@ -19,6 +19,11 @@
       <time datetime="{{ page.date | date_to_xmlschema }}" class="post-header__date">{{ page.date | date: "%b %-d, %Y" }}</time>
       <span class="post-header__dot">&middot;</span>
       <span class="post-header__reading-time">{% assign words = content | number_of_words %}{{ words | divided_by: 200 | plus: 1 }} min read</span>
+      {% if page.jetbrains_plugin_id %}
+      <span class="post-header__install">
+        <iframe width="245px" height="48px" src="https://plugins.jetbrains.com/embeddable/install/{{ page.jetbrains_plugin_id }}" frameborder="0" title="Install from JetBrains Marketplace"></iframe>
+      </span>
+      {% endif %}
     </div>
   </header>
 
